@@ -1,0 +1,22 @@
+ion-card {
+  border-radius: var(--app-radius-lg);
+  box-shadow: var(--app-shadow-sm);
+}
+
+ion-button {
+  --border-radius: var(--app-radius-md);
+  text-transform: none;
+  font-weight: var(--app-font-weight-semibold);
+}
+
+ion-searchbar {
+  --border-radius: var(--app-radius-lg);
+}
+
+ion-toolbar {
+  --background: transparent;
+}
+
+ion-header {
+  box-shadow: none;
+}

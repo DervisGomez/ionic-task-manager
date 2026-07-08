@@ -1,0 +1,199 @@
+$touch-target: calc(var(--app-spacing-3xl) - var(--app-spacing-xs));
+$fab-offset: calc(
+  var(--app-spacing-lg) + var(--app-spacing-sm) + var(--app-spacing-xs)
+);
+
+// Page layout
+.task-list__container {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: var(--app-spacing-2xl) var(--app-spacing-md) var(--app-spacing-3xl);
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.task-list__content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--app-spacing-3xl) 0;
+}
+
+// Page Header — future PageHeaderComponent
+.page-header {
+  margin-bottom: var(--app-spacing-3xl);
+
+  .title {
+    margin: 0;
+    color: var(--app-color-text-primary);
+    font-size: var(--app-font-size-xl);
+    font-weight: var(--app-font-weight-bold);
+    line-height: var(--app-line-height-tight);
+  }
+
+  .subtitle {
+    margin-top: var(--app-spacing-md);
+    color: var(--app-color-text-secondary);
+    font-size: var(--app-font-size-md);
+    font-weight: var(--app-font-weight-regular);
+    line-height: var(--app-line-height-normal);
+  }
+}
+
+// Search — future SearchBarComponent
+.search-bar {
+  margin-bottom: var(--app-spacing-lg);
+
+  ion-searchbar {
+    --background: var(--app-color-surface);
+    --box-shadow: none;
+    --border-radius: var(--app-radius-lg);
+    --icon-color: var(--app-color-text-secondary);
+    --placeholder-color: color-mix(
+      in srgb,
+      var(--app-color-text-secondary) 55%,
+      var(--app-color-text-primary)
+    );
+    --placeholder-opacity: 1;
+    --color: var(--app-color-text-primary);
+    min-height: calc(var(--app-spacing-xl) + var(--app-spacing-sm));
+    padding: 0;
+    transition: box-shadow var(--app-transition-fast);
+  }
+
+  &:focus-within ion-searchbar {
+    --box-shadow: var(--app-shadow-sm);
+  }
+}
+
+// Filters — future CategoryFilterComponent
+.category-filter {
+  display: flex;
+  gap: var(--app-spacing-sm);
+  margin-bottom: var(--app-spacing-2xl);
+  overflow-x: auto;
+
+  &__chip {
+    flex-shrink: 0;
+    margin: 0;
+    min-height: $touch-target;
+    --padding-start: var(--app-spacing-xl);
+    --padding-end: var(--app-spacing-xl);
+    --background: transparent;
+    --color: var(--app-color-text-secondary);
+    border: 1px solid var(--app-color-border);
+    border-radius: $touch-target;
+    transition: all var(--app-transition-fast);
+
+    &:active {
+      transform: scale(0.96);
+    }
+
+    &--selected {
+      --background: var(--ion-color-primary);
+      --color: var(--ion-color-primary-contrast);
+      border-color: var(--ion-color-primary);
+      font-weight: var(--app-font-weight-semibold);
+      box-shadow: var(--app-shadow-sm);
+    }
+  }
+}
+
+// Empty State — future EmptyStateComponent
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--app-spacing-lg);
+  padding: 0 var(--app-spacing-md);
+  max-width: calc(var(--app-spacing-3xl) * 6);
+  animation: empty-state-appear var(--app-transition-slow) ease forwards;
+
+  &__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: calc(var(--app-spacing-3xl) + var(--app-spacing-xl));
+    height: calc(var(--app-spacing-3xl) + var(--app-spacing-xl));
+    border-radius: 50%;
+    background: color-mix(
+      in srgb,
+      var(--ion-color-primary) 5%,
+      var(--ion-background-color)
+    );
+
+    ion-icon {
+      font-size: var(--app-font-size-2xl);
+      color: var(--app-color-text-secondary);
+    }
+  }
+
+  &__title {
+    margin: 0;
+    color: var(--app-color-text-primary);
+    font-size: var(--app-font-size-lg);
+    font-weight: var(--app-font-weight-semibold);
+  }
+
+  &__description {
+    margin: 0;
+    color: var(--app-color-text-secondary);
+    font-size: var(--app-font-size-xs);
+    line-height: var(--app-line-height-relaxed);
+  }
+
+  &__cta {
+    min-width: calc(var(--app-spacing-3xl) * 5 + var(--app-spacing-lg));
+    min-height: $touch-target;
+    margin-top: var(--app-spacing-xs);
+
+    &::part(native) {
+      transition:
+        transform var(--app-transition-fast),
+        opacity var(--app-transition-fast);
+    }
+
+    &:hover::part(native) {
+      opacity: 0.92;
+    }
+
+    &:active::part(native) {
+      transform: scale(0.98);
+      opacity: 0.88;
+    }
+  }
+}
+
+@keyframes empty-state-appear {
+  from {
+    opacity: 0;
+    transform: translateY(var(--app-spacing-md));
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(calc(-1 * var(--app-spacing-2xl)));
+  }
+}
+
+// Floating Action Button — future FloatingActionButtonComponent
+.fab {
+  margin: 0 var(--app-spacing-md)
+    calc($fab-offset + env(safe-area-inset-bottom, 0px));
+
+  ion-fab-button {
+    --box-shadow: var(--app-shadow-sm);
+    transition: transform 200ms ease;
+
+    &:hover {
+      transform: scale(1.05);
+    }
+
+    &:active {
+      transform: scale(0.94);
+    }
+  }
+}

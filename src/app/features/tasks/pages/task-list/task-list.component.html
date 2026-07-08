@@ -1,0 +1,85 @@
+<ion-content [fullscreen]="true">
+  <div class="task-list__container">
+
+    <!-- Page Header -->
+    <header class="page-header">
+      <h1 class="title">Gestor de tareas</h1>
+      <p class="subtitle">
+        Organiza tu día y enfócate en lo importante.
+      </p>
+    </header>
+
+    <!-- Search -->
+    <section class="search-bar" aria-label="Buscar tareas">
+      <ion-searchbar
+        placeholder="Buscar tareas..."
+        [animated]="false"
+      ></ion-searchbar>
+    </section>
+
+    <!-- Filters -->
+    <nav
+      class="category-filter"
+      role="tablist"
+      aria-label="Filtros por categoría"
+    >
+      <ion-chip
+        class="category-filter__chip category-filter__chip--selected"
+        role="tab"
+        aria-selected="true"
+      >
+        Todas
+      </ion-chip>
+      <ion-chip
+        class="category-filter__chip"
+        role="tab"
+        aria-selected="false"
+      >
+        Trabajo
+      </ion-chip>
+      <ion-chip
+        class="category-filter__chip"
+        role="tab"
+        aria-selected="false"
+      >
+        Personal
+      </ion-chip>
+    </nav>
+
+    <!-- Content -->
+    <main class="task-list__content">
+      <!-- Empty State -->
+      <div
+        class="empty-state"
+        role="region"
+        aria-labelledby="empty-state-title"
+      >
+        <div class="empty-state__icon" aria-hidden="true">
+          <ion-icon name="clipboard-outline"></ion-icon>
+        </div>
+        <h2 id="empty-state-title" class="empty-state__title">
+          Aún no hay tareas
+        </h2>
+        <p class="empty-state__description">
+          Crea tu primera tarea y comienza a organizar tu día.
+        </p>
+        <ion-button color="primary" class="empty-state__cta">
+          Añade tu primera tarea
+        </ion-button>
+      </div>
+    </main>
+
+  </div>
+
+  <!-- Floating Action Button -->
+  <ion-fab
+    class="fab"
+    slot="fixed"
+    vertical="bottom"
+    horizontal="end"
+  >
+    <ion-fab-button color="primary" aria-label="Añadir tarea">
+      <ion-icon name="add" aria-hidden="true"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>
