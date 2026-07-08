@@ -1,0 +1,6 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <input type="text" formControlName="title" placeholder="Título" />
+  <textarea formControlName="description" placeholder="Descripción"></textarea>
+  <input type="text" formControlName="categoryId" placeholder="Categoría" />
+  <button type="submit">Guardar tarea</button>
+</form>

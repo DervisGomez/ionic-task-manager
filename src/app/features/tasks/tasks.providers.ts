@@ -7,6 +7,7 @@ import { CreateTaskUseCase } from './domain/use-cases/create-task.use-case';
 import { DeleteTaskUseCase } from './domain/use-cases/delete-task.use-case';
 import { GetTasksUseCase } from './domain/use-cases/get-tasks.use-case';
 import { UpdateTaskUseCase } from './domain/use-cases/update-task.use-case';
+import { TaskFacade } from './presentation/facades/task.facade';
 
 /**
  * Providers del módulo `Tasks`.
@@ -24,4 +25,5 @@ export const TASKS_PROVIDERS: Provider[] = [
   GetTasksUseCase,
   UpdateTaskUseCase,
   DeleteTaskUseCase,
+  TaskFacade,
 ];

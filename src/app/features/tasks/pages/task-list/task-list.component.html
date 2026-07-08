@@ -22,21 +22,24 @@
 
     <!-- Content -->
     <main class="task-list__content">
+      <app-task-form (submitTask)="onCreateTask($event)"></app-task-form>
+
       <!-- Empty State -->
-      <app-empty-state
-        icon="clipboard-outline"
-        title="Aún no hay tareas"
-        description="Crea tu primera tarea y comienza a organizar tu día."
-        buttonText="Añade tu primera tarea"
-        (action)="onCreateTask()"
-      ></app-empty-state>
+      <ng-container *ngIf="tasks.length === 0">
+        <app-empty-state
+          icon="clipboard-outline"
+          title="Aún no hay tareas"
+          description="Crea tu primera tarea y comienza a organizar tu día."
+          buttonText="Añade tu primera tarea"
+        ></app-empty-state>
+      </ng-container>
+
+      <ion-list *ngIf="tasks.length > 0">
+        <ion-item *ngFor="let task of tasks">{{ task.title }}</ion-item>
+      </ion-list>
     </main>
   </div>
 
   <!-- Floating Action Button -->
-  <app-floating-action-button
-    icon="add"
-    ariaLabel="Crear tarea"
-    (action)="onCreateTask()"
-  ></app-floating-action-button>
+  <app-floating-action-button icon="add" ariaLabel="Crear tarea"></app-floating-action-button>
 </ion-content>
