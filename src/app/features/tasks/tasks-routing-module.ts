@@ -5,12 +5,12 @@ import { TaskListComponent } from './pages/task-list/task-list.component';
 const routes: Routes = [
   {
     path: '',
-    component: TaskListComponent
-  }
+    component: TaskListComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class TasksRoutingModule { }
+export class TasksRoutingModule {}

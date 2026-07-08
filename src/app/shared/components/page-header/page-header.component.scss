@@ -1,0 +1,19 @@
+.page-header {
+  margin-bottom: var(--app-spacing-3xl);
+
+  .title {
+    margin: 0;
+    color: var(--app-color-text-primary);
+    font-size: var(--app-font-size-xl);
+    font-weight: var(--app-font-weight-bold);
+    line-height: var(--app-line-height-tight);
+  }
+
+  .subtitle {
+    margin-top: var(--app-spacing-md);
+    color: var(--app-color-text-secondary);
+    font-size: var(--app-font-size-md);
+    font-weight: var(--app-font-weight-regular);
+    line-height: var(--app-line-height-normal);
+  }
+}

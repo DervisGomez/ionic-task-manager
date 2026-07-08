@@ -1,0 +1,11 @@
+<ion-fab slot="fixed" vertical="bottom" horizontal="end">
+  <ion-fab-button
+    color="primary"
+    [attr.aria-label]="ariaLabel"
+    [disabled]="disabled"
+    (click)="onAction()"
+  >
+    <span hidden [attr.aria-label]="ariaLabel"></span>
+    <ion-icon [name]="icon" aria-hidden="true"></ion-icon>
+  </ion-fab-button>
+</ion-fab>

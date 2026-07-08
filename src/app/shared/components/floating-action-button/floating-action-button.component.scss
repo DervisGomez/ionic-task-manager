@@ -1,0 +1,18 @@
+$fab-offset: calc(var(--app-spacing-lg) + var(--app-spacing-sm) + var(--app-spacing-xs));
+
+ion-fab {
+  margin: 0 var(--app-spacing-md) calc($fab-offset + env(safe-area-inset-bottom, 0px));
+
+  ion-fab-button {
+    --box-shadow: var(--app-shadow-sm);
+    transition: transform 200ms ease;
+
+    &:hover {
+      transform: scale(1.05);
+    }
+
+    &:active {
+      transform: scale(0.94);
+    }
+  }
+}

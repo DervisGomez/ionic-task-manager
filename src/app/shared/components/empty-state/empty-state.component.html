@@ -1,0 +1,20 @@
+<section class="empty-state" role="region" aria-labelledby="empty-state-title">
+  <div class="empty-state__icon" aria-hidden="true">
+    <ion-icon [name]="icon"></ion-icon>
+  </div>
+
+  <h2 id="empty-state-title" class="empty-state__title">{{ title }}</h2>
+
+  <p class="empty-state__description">{{ description }}</p>
+
+  @if (buttonText) {
+    <ion-button
+      color="primary"
+      class="empty-state__cta"
+      [disabled]="buttonDisabled"
+      (click)="onAction()"
+    >
+      {{ buttonText }}
+    </ion-button>
+  }
+</section>

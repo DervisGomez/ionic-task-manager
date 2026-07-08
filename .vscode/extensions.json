@@ -1,9 +1,9 @@
 {
-    "recommendations": [
-        "Webnative.webnative",
-        "Angular.ng-template",
-        "dbaeumer.vscode-eslint",
-        "esbenp.prettier-vscode",
-        "eamodio.gitlens"
-    ]
+  "recommendations": [
+    "Webnative.webnative",
+    "Angular.ng-template",
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "eamodio.gitlens"
+  ]
 }

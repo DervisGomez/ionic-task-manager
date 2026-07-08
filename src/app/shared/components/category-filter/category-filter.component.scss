@@ -1,0 +1,33 @@
+$touch-target: calc(var(--app-spacing-3xl) - var(--app-spacing-xs));
+
+.category-filter {
+  display: flex;
+  gap: var(--app-spacing-sm);
+  margin-bottom: var(--app-spacing-2xl);
+  overflow-x: auto;
+
+  &__chip {
+    flex-shrink: 0;
+    margin: 0;
+    min-height: $touch-target;
+    --padding-start: var(--app-spacing-xl);
+    --padding-end: var(--app-spacing-xl);
+    --background: transparent;
+    --color: var(--app-color-text-secondary);
+    border: 1px solid var(--app-color-border);
+    border-radius: $touch-target;
+    transition: all var(--app-transition-fast);
+
+    &:active {
+      transform: scale(0.96);
+    }
+
+    &--selected {
+      --background: var(--ion-color-primary);
+      --color: var(--ion-color-primary-contrast);
+      border-color: var(--ion-color-primary);
+      font-weight: var(--app-font-weight-semibold);
+      box-shadow: var(--app-shadow-sm);
+    }
+  }
+}

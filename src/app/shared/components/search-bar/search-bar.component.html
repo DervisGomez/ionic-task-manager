@@ -1,0 +1,10 @@
+<section class="search-bar" [attr.aria-label]="placeholder">
+  <ion-searchbar
+    [placeholder]="placeholder"
+    [value]="value"
+    [debounce]="debounce"
+    [disabled]="disabled"
+    [animated]="false"
+    (ionInput)="onInput($event)"
+  ></ion-searchbar>
+</section>
