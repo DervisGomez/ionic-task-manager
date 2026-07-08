@@ -1,8 +1,9 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 
+import { SharedModule } from '@shared/shared.module';
+
 import { TaskListComponent } from './task-list.component';
-import { SharedModule } from '../../../../shared/shared.module';
 
 describe('TaskListComponent', () => {
   let component: TaskListComponent;
@@ -19,7 +20,17 @@ describe('TaskListComponent', () => {
     fixture.detectChanges();
   }));
 
-  it('should create', () => {
+  it('debe crear el componente', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('debe actualizar la categoría seleccionada', () => {
+    component.onCategorySelected('work');
+    expect(component.selectedCategory).toBe('work');
+  });
+
+  it('debe actualizar el término de búsqueda', () => {
+    component.onSearchChanged('urgent');
+    expect(component.searchTerm).toBe('urgent');
   });
 });

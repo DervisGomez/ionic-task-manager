@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 
-import { FilterOption } from '../../../../shared/models/filter-option.model';
+import { FilterOption } from '@shared/models/filter-option.model';
 
 @Component({
   selector: 'app-task-list',
