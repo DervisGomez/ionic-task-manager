@@ -28,7 +28,7 @@ describe('TaskCardComponent', () => {
 
     fixture = TestBed.createComponent(TaskCardComponent);
     component = fixture.componentInstance;
-    component.task = task;
+    fixture.componentRef.setInput('task', task);
     fixture.detectChanges();
     flush();
   }));
@@ -50,7 +50,7 @@ describe('TaskCardComponent', () => {
   });
 
   it('no renderiza descripción cuando está vacía', () => {
-    component.task = { ...task, description: '' };
+    fixture.componentRef.setInput('task', { ...task, description: '' });
     fixture.detectChanges();
 
     const description = fixture.debugElement.query(By.css('.task-card__description'));
@@ -71,7 +71,7 @@ describe('TaskCardComponent', () => {
   });
 
   it('no muestra categoría cuando la tarea no tiene categoría', () => {
-    component.task = { ...task, categoryId: '', categoryLabel: '' };
+    fixture.componentRef.setInput('task', { ...task, categoryId: '', categoryLabel: '' });
     fixture.detectChanges();
 
     const category = fixture.debugElement.query(By.css('.task-card__category'));
@@ -126,7 +126,7 @@ describe('TaskCardComponent', () => {
   it('expone aria-label contextual en el botón Ver más', () => {
     const longDescription =
       'Texto largo que supera el umbral para mostrar el control de expansión en la tarjeta de tarea dentro del listado principal de la aplicación.';
-    component.task = { ...task, description: longDescription };
+    fixture.componentRef.setInput('task', { ...task, description: longDescription });
     fixture.detectChanges();
 
     const toggle = fixture.debugElement.query(By.css('.task-card__toggle'))
@@ -150,7 +150,7 @@ describe('TaskCardComponent', () => {
   it('expande y colapsa descripciones largas', () => {
     const longDescription =
       'Texto largo que supera el umbral para mostrar el control de expansión en la tarjeta de tarea dentro del listado principal de la aplicación.';
-    component.task = { ...task, description: longDescription };
+    fixture.componentRef.setInput('task', { ...task, description: longDescription });
     fixture.detectChanges();
 
     const description = fixture.debugElement.query(By.css('.task-card__description'))
@@ -176,30 +176,22 @@ describe('TaskCardComponent', () => {
   });
 
   it('reinicia la expansión cuando cambia la tarea', () => {
-    component.task = {
+    fixture.componentRef.setInput('task', {
       ...task,
       id: 'task-2',
       description:
         'Otra descripción suficientemente larga para activar el botón Ver más en la tarjeta de tarea del listado.',
-    };
+    });
     fixture.detectChanges();
 
     component.toggleDescription(new Event('click'));
     fixture.detectChanges();
 
-    component.task = {
+    fixture.componentRef.setInput('task', {
       ...task,
       id: 'task-3',
       description:
         'Tercera descripción larga que también debe mostrar el control Ver más tras actualizar la tarea.',
-    };
-    component.ngOnChanges({
-      task: {
-        currentValue: component.task,
-        previousValue: { ...task, id: 'task-2' },
-        firstChange: false,
-        isFirstChange: () => false,
-      },
     });
     fixture.detectChanges();
 
@@ -214,22 +206,14 @@ describe('TaskCardComponent', () => {
     const longDescription =
       'Texto largo que supera el umbral para mostrar el control de expansión en la tarjeta de tarea dentro del listado principal de la aplicación.';
 
-    component.task = { ...task, description: longDescription };
+    fixture.componentRef.setInput('task', { ...task, description: longDescription });
     fixture.detectChanges();
 
     component.toggleDescription(new Event('click'));
     fixture.detectChanges();
 
-    const previousTask = component.task;
-    component.task = { ...previousTask, description: longDescription };
-    component.ngOnChanges({
-      task: {
-        currentValue: component.task,
-        previousValue: previousTask,
-        firstChange: false,
-        isFirstChange: () => false,
-      },
-    });
+    const previousTask = { ...task, description: longDescription };
+    fixture.componentRef.setInput('task', { ...previousTask, description: longDescription });
     fixture.detectChanges();
 
     const description = fixture.debugElement.query(By.css('.task-card__description'))

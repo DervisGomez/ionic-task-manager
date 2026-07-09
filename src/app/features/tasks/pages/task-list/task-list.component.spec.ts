@@ -12,6 +12,8 @@ import { CategoryFacade } from '@features/categories/presentation/facades/catego
 import { CreateTaskCommand } from '../../domain/commands/create-task.command';
 import { TaskCardComponent } from '../../presentation/components/task-card/task-card.component';
 import { TaskFormComponent } from '../../presentation/components/task-form/task-form.component';
+import { TaskBenchmarkPanelComponent } from '../../presentation/dev/task-benchmark-panel.component';
+import { TaskBenchmarkService } from '../../presentation/dev/task-benchmark.service';
 import { TaskFacade } from '../../presentation/facades/task.facade';
 import { TaskViewModel } from '../../presentation/models/task.viewmodel';
 import { TaskListComponent } from './task-list.component';
@@ -39,6 +41,29 @@ describe('TaskListComponent', () => {
     { id: 'work', name: 'Trabajo' },
     { id: 'personal', name: 'Personal' },
   ];
+
+  const PAGE_SIZE = 30;
+
+  const createTaskViewModels = (count: number): TaskViewModel[] =>
+    Array.from({ length: count }, (_, index) => ({
+      id: `task-${index}`,
+      title: `Tarea ${index}`,
+      description: `Descripción ${index}`,
+      categoryId: 'work',
+      completed: false,
+    }));
+
+  const setFacadeTasks = (count: number): void => {
+    Object.defineProperty(taskFacadeSpy, 'tasks', {
+      get: () => createTaskViewModels(count),
+      configurable: true,
+    });
+  };
+
+  const syncViewState = (): void => {
+    (component as unknown as { syncViewState: () => void }).syncViewState();
+    fixture.detectChanges();
+  };
 
   beforeEach(async () => {
     taskFacadeSpy = jasmine.createSpyObj<TaskFacade>(
@@ -93,7 +118,12 @@ describe('TaskListComponent', () => {
     );
 
     TestBed.configureTestingModule({
-      declarations: [TaskListComponent, TaskFormComponent, TaskCardComponent],
+      declarations: [
+        TaskListComponent,
+        TaskFormComponent,
+        TaskCardComponent,
+        TaskBenchmarkPanelComponent,
+      ],
       imports: [ReactiveFormsModule, IonicModule.forRoot(), SharedModule],
       providers: [
         { provide: TaskFacade, useValue: taskFacadeSpy },
@@ -101,13 +131,17 @@ describe('TaskListComponent', () => {
         { provide: AlertController, useValue: alertControllerSpy },
         { provide: Router, useValue: routerSpy },
         { provide: RemoteConfigService, useValue: remoteConfigSpy },
+        {
+          provide: TaskBenchmarkService,
+          useValue: jasmine.createSpyObj<TaskBenchmarkService>('TaskBenchmarkService', ['run']),
+        },
       ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(TaskListComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
     await component.ionViewWillEnter();
+    fixture.detectChanges();
   });
 
   it('debe crear el componente', () => {
@@ -142,7 +176,7 @@ describe('TaskListComponent', () => {
 
   it('oculta el botón de administrar categorías cuando el feature flag está deshabilitado', () => {
     remoteConfigSpy.getBoolean.and.returnValue(false);
-    fixture.detectChanges();
+    syncViewState();
 
     const actionButton = fixture.nativeElement.querySelector(
       'app-page-header .page-header__action',
@@ -153,6 +187,7 @@ describe('TaskListComponent', () => {
 
   it('no navega a /categories cuando el feature flag está deshabilitado', () => {
     remoteConfigSpy.getBoolean.and.returnValue(false);
+    syncViewState();
 
     component.navigateToCategories();
 
@@ -202,10 +237,8 @@ describe('TaskListComponent', () => {
   });
 
   it('muestra el FAB cuando hay tareas', () => {
-    Object.defineProperty(taskFacadeSpy, 'tasks', {
-      get: () => [editingTask],
-    });
-    fixture.detectChanges();
+    setFacadeTasks(1);
+    syncViewState();
 
     const fab = fixture.nativeElement.querySelector('app-floating-action-button');
 
@@ -356,16 +389,152 @@ describe('TaskListComponent', () => {
   });
 
   it('expone semántica de lista accesible cuando hay tareas', () => {
-    Object.defineProperty(taskFacadeSpy, 'tasks', {
-      get: () => [editingTask],
-    });
-    fixture.detectChanges();
+    setFacadeTasks(1);
+    syncViewState();
 
     const list = fixture.nativeElement.querySelector('ul.task-list__list') as HTMLElement;
     const items = fixture.nativeElement.querySelectorAll('ul.task-list__list > li');
 
     expect(list.getAttribute('aria-label')).toBe('Lista de tareas');
     expect(items.length).toBe(1);
+  });
+
+  describe('infinite scroll', () => {
+    it('carga inicial muestra únicamente PAGE_SIZE elementos', () => {
+      setFacadeTasks(50);
+      syncViewState();
+
+      expect(component.visibleTasks).toHaveSize(PAGE_SIZE);
+      expect(component.showInfiniteScroll).toBeTrue();
+      expect(component.hasMoreVisibleTasks).toBeTrue();
+    });
+
+    it('loadMoreTasks() añade PAGE_SIZE elementos adicionales', () => {
+      setFacadeTasks(50);
+      syncViewState();
+
+      component.loadMoreTasks();
+
+      expect(component.visibleTasks).toHaveSize(50);
+      expect(component.hasMoreVisibleTasks).toBeFalse();
+    });
+
+    it('reinicia la lista incremental al buscar', () => {
+      setFacadeTasks(50);
+      syncViewState();
+      component.loadMoreTasks();
+
+      component.onSearchChanged('urgent');
+      syncViewState();
+
+      expect(component.visibleTasks).toHaveSize(PAGE_SIZE);
+      expect(component.hasMoreVisibleTasks).toBeTrue();
+    });
+
+    it('reinicia la lista incremental al cambiar categoría', () => {
+      setFacadeTasks(50);
+      syncViewState();
+      component.loadMoreTasks();
+
+      component.onCategorySelected('work');
+      syncViewState();
+
+      expect(component.visibleTasks).toHaveSize(PAGE_SIZE);
+      expect(component.hasMoreVisibleTasks).toBeTrue();
+    });
+
+    it('reinicia la lista incremental al crear una tarea', async () => {
+      setFacadeTasks(40);
+      syncViewState();
+      component.loadMoreTasks();
+
+      await component.onSubmitTask({
+        title: 'Nueva tarea',
+        description: 'Descripción',
+        categoryId: 'work',
+      });
+      syncViewState();
+
+      expect(component.visibleTasks).toHaveSize(PAGE_SIZE);
+      expect(component.hasMoreVisibleTasks).toBeTrue();
+    });
+
+    it('reinicia la lista incremental al editar una tarea', async () => {
+      setFacadeTasks(40);
+      syncViewState();
+      component.loadMoreTasks();
+
+      component.editingTask = createTaskViewModels(40)[0];
+      await component.onSubmitTask({
+        title: 'Tarea editada',
+        description: 'Descripción',
+        categoryId: 'work',
+      });
+      syncViewState();
+
+      expect(component.visibleTasks).toHaveSize(PAGE_SIZE);
+      expect(component.hasMoreVisibleTasks).toBeTrue();
+    });
+
+    it('reinicia la lista incremental al eliminar una tarea', async () => {
+      setFacadeTasks(40);
+      syncViewState();
+      component.loadMoreTasks();
+
+      await component.onDeleteTask('task-0');
+
+      const deleteButton = alertConfig!.buttons?.find(
+        (button): button is AlertButton => typeof button === 'object' && button.text === 'Eliminar',
+      );
+      await deleteButton?.handler?.(undefined);
+      syncViewState();
+
+      expect(component.visibleTasks).toHaveSize(PAGE_SIZE);
+      expect(component.hasMoreVisibleTasks).toBeTrue();
+    });
+
+    it('no muestra Infinite Scroll con menos de PAGE_SIZE tareas', () => {
+      setFacadeTasks(PAGE_SIZE - 1);
+      syncViewState();
+
+      const infiniteScroll = fixture.nativeElement.querySelector('ion-infinite-scroll');
+
+      expect(infiniteScroll).toBeNull();
+      expect(component.showInfiniteScroll).toBeFalse();
+    });
+
+    it('reinicia la lista incremental al completar una tarea', async () => {
+      setFacadeTasks(40);
+      syncViewState();
+      component.loadMoreTasks();
+
+      await component.onToggleCompleted('task-0');
+
+      expect(component.visibleTasks).toHaveSize(PAGE_SIZE);
+      expect(component.hasMoreVisibleTasks).toBeTrue();
+    });
+
+    it('reinicia la lista incremental al recargar desde TaskFacade', async () => {
+      setFacadeTasks(50);
+      syncViewState();
+      component.loadMoreTasks();
+
+      await component.ionViewWillEnter();
+
+      expect(component.visibleTasks).toHaveSize(PAGE_SIZE);
+      expect(component.hasMoreVisibleTasks).toBeTrue();
+    });
+
+    it('deshabilita Infinite Scroll cuando no hay más elementos', () => {
+      setFacadeTasks(35);
+      syncViewState();
+      component.loadMoreTasks();
+      fixture.detectChanges();
+
+      expect(component.hasMoreVisibleTasks).toBeFalse();
+      expect(component.visibleTasks).toHaveSize(35);
+      expect(fixture.nativeElement.querySelector('ion-infinite-scroll')).toBeTruthy();
+    });
   });
 
   it('asocia el modal con el título y la descripción del formulario', () => {

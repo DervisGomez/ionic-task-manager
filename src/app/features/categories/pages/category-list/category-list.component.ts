@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { AlertController, ViewWillEnter } from '@ionic/angular';
 
@@ -10,6 +10,7 @@ import { CategoryViewModel } from '../../presentation/models/category.viewmodel'
   selector: 'app-category-list',
   templateUrl: './category-list.component.html',
   styleUrls: ['./category-list.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: false,
 })
 export class CategoryListComponent implements ViewWillEnter {
@@ -23,32 +24,24 @@ export class CategoryListComponent implements ViewWillEnter {
 
   toastColor: 'success' | 'danger' = 'success';
 
+  categories: readonly CategoryViewModel[] = [];
+
+  loading = false;
+
+  error: string | null = null;
+
+  hasCategories = false;
+
+  showContent = false;
+
   private readonly categoryFacade = inject(CategoryFacade);
   private readonly alertController = inject(AlertController);
   private readonly router = inject(Router);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   async ionViewWillEnter(): Promise<void> {
     await this.categoryFacade.loadCategories();
-  }
-
-  get categories(): readonly CategoryViewModel[] {
-    return this.categoryFacade.categories;
-  }
-
-  get loading(): boolean {
-    return this.categoryFacade.loading;
-  }
-
-  get error(): string | null {
-    return this.categoryFacade.error;
-  }
-
-  get hasCategories(): boolean {
-    return this.categories.length > 0;
-  }
-
-  get showContent(): boolean {
-    return !this.loading && !this.error;
+    this.syncViewState();
   }
 
   trackByCategoryId(_index: number, category: CategoryViewModel): string {
@@ -80,6 +73,7 @@ export class CategoryListComponent implements ViewWillEnter {
       }
 
       this.closeCreateModal();
+      this.syncViewState();
     } catch {
       this.showToast('No fue posible completar la operación', 'danger');
     }
@@ -119,6 +113,7 @@ export class CategoryListComponent implements ViewWillEnter {
     try {
       await this.categoryFacade.deleteCategory(id);
       this.showToast('Categoría eliminada correctamente');
+      this.syncViewState();
     } catch {
       this.showToast('No fue posible completar la operación', 'danger');
     }
@@ -128,5 +123,15 @@ export class CategoryListComponent implements ViewWillEnter {
     this.toastMessage = message;
     this.toastColor = color;
     this.toastOpen = true;
+    this.cdr.markForCheck();
+  }
+
+  private syncViewState(): void {
+    this.categories = this.categoryFacade.categories;
+    this.loading = this.categoryFacade.loading;
+    this.error = this.categoryFacade.error;
+    this.hasCategories = this.categories.length > 0;
+    this.showContent = !this.loading && !this.error;
+    this.cdr.markForCheck();
   }
 }

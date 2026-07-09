@@ -1,4 +1,12 @@
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  Output,
+  SimpleChanges,
+} from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 import { CategoryViewModel } from '@features/categories/presentation/models/category.viewmodel';
@@ -9,6 +17,7 @@ import { TaskViewModel } from '../../models/task.viewmodel';
 @Component({
   selector: 'app-task-form',
   templateUrl: './task-form.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: false,
 })
 export class TaskFormComponent implements OnChanges {
@@ -170,6 +179,10 @@ export class TaskFormComponent implements OnChanges {
 
   getCategoryChipId(categoryId: string): string {
     return `task-form-category-${categoryId}`;
+  }
+
+  trackByCategoryId(_index: number, category: CategoryViewModel): string {
+    return category.id;
   }
 
   private focusCategory(categoryId: string): void {

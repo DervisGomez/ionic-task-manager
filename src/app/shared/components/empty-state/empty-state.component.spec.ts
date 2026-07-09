@@ -15,8 +15,11 @@ describe('EmptyStateComponent', () => {
 
     fixture = TestBed.createComponent(EmptyStateComponent);
     component = fixture.componentInstance;
-    component.title = 'Aun no hay tareas';
-    component.description = 'Crea tu primera tarea y comienza a organizar tu dia.';
+    fixture.componentRef.setInput('title', 'Aun no hay tareas');
+    fixture.componentRef.setInput(
+      'description',
+      'Crea tu primera tarea y comienza a organizar tu dia.',
+    );
     fixture.detectChanges();
   }));
 
@@ -43,14 +46,14 @@ describe('EmptyStateComponent', () => {
   });
 
   it('should show button when buttonText exists', () => {
-    component.buttonText = 'Anade tu primera tarea';
+    fixture.componentRef.setInput('buttonText', 'Anade tu primera tarea');
     fixture.detectChanges();
 
     expect(fixture.nativeElement.querySelector('ion-button')).not.toBeNull();
   });
 
   it('should hide button when buttonText does not exist', () => {
-    component.buttonText = undefined;
+    fixture.componentRef.setInput('buttonText', undefined);
     fixture.detectChanges();
 
     expect(fixture.nativeElement.querySelector('ion-button')).toBeNull();

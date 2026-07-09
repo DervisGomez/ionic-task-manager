@@ -31,6 +31,11 @@ describe('CategoryListComponent', () => {
     { id: 'personal', name: 'Personal' },
   ];
 
+  const syncViewState = (): void => {
+    (component as unknown as { syncViewState: () => void }).syncViewState();
+    fixture.detectChanges();
+  };
+
   beforeEach(async () => {
     categoryFacadeSpy = jasmine.createSpyObj<CategoryFacade>(
       'CategoryFacade',
@@ -70,8 +75,8 @@ describe('CategoryListComponent', () => {
 
     fixture = TestBed.createComponent(CategoryListComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
     await component.ionViewWillEnter();
+    fixture.detectChanges();
   });
 
   it('debe crear el componente', () => {
@@ -117,7 +122,7 @@ describe('CategoryListComponent', () => {
     Object.defineProperty(categoryFacadeSpy, 'categories', {
       get: () => categories,
     });
-    fixture.detectChanges();
+    syncViewState();
 
     const items = fixture.nativeElement.querySelectorAll('.category-list__item');
     const emptyState = fixture.nativeElement.querySelector('app-empty-state');
@@ -156,7 +161,7 @@ describe('CategoryListComponent', () => {
     Object.defineProperty(categoryFacadeSpy, 'categories', {
       get: () => categories,
     });
-    fixture.detectChanges();
+    syncViewState();
 
     const fab = fixture.nativeElement.querySelector('app-floating-action-button');
 

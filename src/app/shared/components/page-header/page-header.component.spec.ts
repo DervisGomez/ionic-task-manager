@@ -15,7 +15,7 @@ describe('PageHeaderComponent', () => {
 
     fixture = TestBed.createComponent(PageHeaderComponent);
     component = fixture.componentInstance;
-    component.title = 'Gestor de tareas';
+    fixture.componentRef.setInput('title', 'Gestor de tareas');
     fixture.detectChanges();
   }));
 
@@ -29,7 +29,7 @@ describe('PageHeaderComponent', () => {
   });
 
   it('should render the subtitle when provided', () => {
-    component.subtitle = 'Organiza tu día y enfócate en lo importante.';
+    fixture.componentRef.setInput('subtitle', 'Organiza tu día y enfócate en lo importante.');
     fixture.detectChanges();
 
     const subtitle = fixture.nativeElement.querySelector('p');
@@ -37,15 +37,15 @@ describe('PageHeaderComponent', () => {
   });
 
   it('should not render the subtitle when not provided', () => {
-    component.subtitle = undefined;
+    fixture.componentRef.setInput('subtitle', undefined);
     fixture.detectChanges();
 
     expect(fixture.nativeElement.querySelector('p')).toBeNull();
   });
 
   it('renderiza el botón de acción cuando se proporciona actionIcon', () => {
-    component.actionIcon = 'pricetags-outline';
-    component.actionAriaLabel = 'Administrar categorías';
+    fixture.componentRef.setInput('actionIcon', 'pricetags-outline');
+    fixture.componentRef.setInput('actionAriaLabel', 'Administrar categorías');
     fixture.detectChanges();
 
     const actionButton = fixture.nativeElement.querySelector('.page-header__action') as HTMLElement;
@@ -57,8 +57,8 @@ describe('PageHeaderComponent', () => {
 
   it('emite action al pulsar el botón de acción', () => {
     spyOn(component.action, 'emit');
-    component.actionIcon = 'pricetags-outline';
-    component.actionAriaLabel = 'Administrar categorías';
+    fixture.componentRef.setInput('actionIcon', 'pricetags-outline');
+    fixture.componentRef.setInput('actionAriaLabel', 'Administrar categorías');
     fixture.detectChanges();
 
     component.onActionClick();
@@ -67,8 +67,8 @@ describe('PageHeaderComponent', () => {
   });
 
   it('renderiza el botón de regreso cuando showBackButton es true', () => {
-    component.showBackButton = true;
-    component.backAriaLabel = 'Volver a tareas';
+    fixture.componentRef.setInput('showBackButton', true);
+    fixture.componentRef.setInput('backAriaLabel', 'Volver a tareas');
     fixture.detectChanges();
 
     const backButton = fixture.nativeElement.querySelector('.page-header__back') as HTMLElement;
@@ -80,7 +80,7 @@ describe('PageHeaderComponent', () => {
 
   it('emite back al pulsar el botón de regreso', () => {
     spyOn(component.back, 'emit');
-    component.showBackButton = true;
+    fixture.componentRef.setInput('showBackButton', true);
     fixture.detectChanges();
 
     component.onBackClick();

@@ -39,7 +39,7 @@ describe('SearchBarComponent', () => {
   });
 
   it('should set aria-label from placeholder by default', () => {
-    component.placeholder = 'Buscar tareas...';
+    fixture.componentRef.setInput('placeholder', 'Buscar tareas...');
     fixture.detectChanges();
 
     const searchbar = fixture.nativeElement.querySelector('ion-searchbar') as HTMLElement;
@@ -52,8 +52,8 @@ describe('SearchBarComponent', () => {
   });
 
   it('should prefer ariaLabel over placeholder for the accessible label', () => {
-    component.placeholder = 'Buscar tareas...';
-    component.ariaLabel = 'Buscar en el listado de tareas';
+    fixture.componentRef.setInput('placeholder', 'Buscar tareas...');
+    fixture.componentRef.setInput('ariaLabel', 'Buscar en el listado de tareas');
     fixture.detectChanges();
 
     const searchbar = fixture.nativeElement.querySelector('ion-searchbar') as HTMLElement;

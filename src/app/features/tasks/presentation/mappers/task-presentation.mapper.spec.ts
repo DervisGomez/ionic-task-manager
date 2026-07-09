@@ -77,6 +77,13 @@ describe('TaskPresentationMapper', () => {
     ]);
   });
 
+  it('buildCategoryMap permite búsquedas O(1) por id', () => {
+    const categoryMap = TaskPresentationMapper.buildCategoryMap(categories);
+
+    expect(categoryMap.get('work')?.name).toBe('Trabajo');
+    expect(categoryMap.get('missing')).toBeUndefined();
+  });
+
   it('resuelve categoryLabel para categorías conocidas y desconocidas', () => {
     const shoppingTask: TaskViewModel = {
       id: '1',

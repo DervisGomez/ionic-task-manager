@@ -27,9 +27,11 @@ export class CategoryFacade {
     error: null,
   };
 
+  private categoryViewModels: readonly CategoryViewModel[] = [];
+
   /** Listado de categorías mostradas en la UI. */
   get categories(): readonly CategoryViewModel[] {
-    return CategoryMapper.toViewModels(this.state.categories);
+    return this.categoryViewModels;
   }
 
   /** Indica si hay una operación en curso. */
@@ -51,6 +53,7 @@ export class CategoryFacade {
     try {
       const categories = await this.getCategoriesUseCase.execute();
       this.state = { ...this.state, categories, loading: false };
+      this.refreshCategoryViewModels();
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
       this.state = { ...this.state, loading: false, error: message };
@@ -84,5 +87,9 @@ export class CategoryFacade {
   async deleteCategory(id: string): Promise<void> {
     await this.deleteCategoryUseCase.execute(id);
     await this.loadCategories();
+  }
+
+  private refreshCategoryViewModels(): void {
+    this.categoryViewModels = CategoryMapper.toViewModels(this.state.categories);
   }
 }

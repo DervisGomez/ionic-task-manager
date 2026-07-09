@@ -1,4 +1,12 @@
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  Output,
+  SimpleChanges,
+} from '@angular/core';
 
 import { EnrichedTaskViewModel } from '../../models/enriched-task.viewmodel';
 
@@ -7,6 +15,7 @@ const DESCRIPTION_TOGGLE_THRESHOLD = 85;
 @Component({
   selector: 'app-task-card',
   templateUrl: './task-card.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: false,
 })
 export class TaskCardComponent implements OnChanges {

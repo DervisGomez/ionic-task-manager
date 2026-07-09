@@ -30,9 +30,11 @@ export class TaskFacade {
     error: null,
   };
 
+  private taskViewModels: readonly TaskViewModel[] = [];
+
   /** Listado de tareas filtradas del agregado Task. */
   get tasks(): readonly TaskViewModel[] {
-    return TaskMapper.toViewModels(this.state.filteredTasks);
+    return this.taskViewModels;
   }
 
   /** Término de búsqueda activo. */
@@ -160,5 +162,10 @@ export class TaskFacade {
     }
 
     this.state = { ...this.state, filteredTasks };
+    this.refreshTaskViewModels();
+  }
+
+  private refreshTaskViewModels(): void {
+    this.taskViewModels = TaskMapper.toViewModels(this.state.filteredTasks);
   }
 }

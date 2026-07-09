@@ -1,4 +1,12 @@
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  Output,
+  SimpleChanges,
+} from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 import { CreateCategoryCommand } from '../../../domain/commands/create-category.command';
@@ -7,6 +15,7 @@ import { CategoryViewModel } from '../../models/category.viewmodel';
 @Component({
   selector: 'app-category-form',
   templateUrl: './category-form.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: false,
 })
 export class CategoryFormComponent implements OnChanges {

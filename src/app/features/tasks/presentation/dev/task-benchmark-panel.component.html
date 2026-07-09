@@ -1,0 +1,47 @@
+<section class="task-benchmark" aria-label="Panel de benchmark de rendimiento">
+  <header class="task-benchmark__header">
+    <h2 class="task-benchmark__title">Benchmark (solo desarrollo)</h2>
+    <p class="task-benchmark__description">
+      Pobla el repositorio y mide carga inicial, búsqueda y filtrado.
+    </p>
+  </header>
+
+  <div class="task-benchmark__actions">
+    <ion-button
+      *ngFor="let count of presets"
+      size="small"
+      fill="outline"
+      [disabled]="isRunning"
+      (click)="runBenchmark(count)"
+    >
+      {{ count }} tareas
+    </ion-button>
+  </div>
+
+  <p *ngIf="isRunning" class="task-benchmark__status" role="status">Ejecutando benchmark…</p>
+
+  <p *ngIf="errorMessage" class="task-benchmark__error" role="alert">{{ errorMessage }}</p>
+
+  <dl *ngIf="lastResult as result" class="task-benchmark__results">
+    <div>
+      <dt>Tareas</dt>
+      <dd>{{ result.taskCount }}</dd>
+    </div>
+    <div>
+      <dt>Carga inicial</dt>
+      <dd>{{ result.initialLoadMs | number: '1.0-2' }} ms</dd>
+    </div>
+    <div>
+      <dt>Búsqueda</dt>
+      <dd>{{ result.searchMs | number: '1.0-2' }} ms</dd>
+    </div>
+    <div>
+      <dt>Filtrado</dt>
+      <dd>{{ result.filterMs | number: '1.0-2' }} ms</dd>
+    </div>
+    <div>
+      <dt>Visibles (inicial)</dt>
+      <dd>{{ result.visibleTaskCount }}</dd>
+    </div>
+  </dl>
+</section>

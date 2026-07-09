@@ -1,4 +1,13 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnInit,
+  Output,
+  SimpleChanges,
+} from '@angular/core';
 
 import { FilterOption } from '../../models/filter-option.model';
 
@@ -6,9 +15,10 @@ import { FilterOption } from '../../models/filter-option.model';
   selector: 'app-category-filter',
   templateUrl: './category-filter.component.html',
   styleUrls: ['./category-filter.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: false,
 })
-export class CategoryFilterComponent {
+export class CategoryFilterComponent implements OnInit, OnChanges {
   /**
    * Categorías disponibles para el filtro.
    */
@@ -25,6 +35,8 @@ export class CategoryFilterComponent {
    */
   @Output() readonly selectedChange = new EventEmitter<string>();
 
+  options: readonly FilterOption[] = [{ id: 'all', label: 'Todas' }];
+
   private static readonly NAVIGATION_KEYS = [
     'ArrowLeft',
     'ArrowRight',
@@ -34,14 +46,14 @@ export class CategoryFilterComponent {
     'End',
   ] as const;
 
-  /**
-   * Opciones de filtro derivadas de las categorías recibidas.
-   */
-  get options(): readonly FilterOption[] {
-    return [
-      { id: 'all', label: 'Todas' },
-      ...this.categories.map(({ id, name }) => ({ id, label: name })),
-    ];
+  ngOnInit(): void {
+    this.refreshOptions();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['categories']) {
+      this.refreshOptions();
+    }
   }
 
   /**
@@ -100,6 +112,13 @@ export class CategoryFilterComponent {
     if (nextId !== this.selected) {
       this.selectedChange.emit(nextId);
     }
+  }
+
+  private refreshOptions(): void {
+    this.options = [
+      { id: 'all', label: 'Todas' },
+      ...this.categories.map(({ id, name }) => ({ id, label: name })),
+    ];
   }
 
   private focusOption(id: string): void {

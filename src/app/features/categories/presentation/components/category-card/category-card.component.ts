@@ -1,10 +1,11 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 
 import { CategoryViewModel } from '../../models/category.viewmodel';
 
 @Component({
   selector: 'app-category-card',
   templateUrl: './category-card.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: false,
 })
 export class CategoryCardComponent {

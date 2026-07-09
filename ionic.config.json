@@ -1,5 +1,7 @@
 {
   "name": "ionic-task-manager",
-  "integrations": {},
+  "integrations": {
+    "cordova": {}
+  },
   "type": "angular"
 }

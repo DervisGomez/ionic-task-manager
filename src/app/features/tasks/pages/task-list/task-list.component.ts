@@ -1,11 +1,13 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { AlertController, ViewWillEnter } from '@ionic/angular';
+import { AlertController, InfiniteScrollCustomEvent, ViewWillEnter } from '@ionic/angular';
 
 import { RemoteConfigKeys } from '@core/firebase/remote-config.keys';
 import { RemoteConfigService } from '@core/firebase/services/remote-config.service';
 import { CategoryFacade } from '@features/categories/presentation/facades/category.facade';
 import { CategoryViewModel } from '@features/categories/presentation/models/category.viewmodel';
+import { environment } from '@env/environment';
+import { IncrementalList } from '@shared/utils/incremental-list';
 
 import { CreateTaskCommand } from '../../domain/commands/create-task.command';
 import { TaskPresentationMapper } from '../../presentation/mappers/task-presentation.mapper';
@@ -17,9 +19,14 @@ import { TaskViewModel } from '../../presentation/models/task.viewmodel';
   selector: 'app-task-list',
   templateUrl: './task-list.component.html',
   styleUrls: ['./task-list.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: false,
 })
 export class TaskListComponent implements ViewWillEnter {
+  private static readonly PAGE_SIZE = 30;
+
+  readonly isProduction = environment.production;
+
   isCreateModalOpen = false;
 
   editingTask: TaskViewModel | null = null;
@@ -30,39 +37,37 @@ export class TaskListComponent implements ViewWillEnter {
 
   toastColor: 'success' | 'danger' = 'success';
 
+  categories: readonly CategoryViewModel[] = [];
+
+  visibleTasks: readonly EnrichedTaskViewModel[] = [];
+
+  hasTasks = false;
+
+  hasMoreVisibleTasks = false;
+
+  showInfiniteScroll = false;
+
+  searchTerm = '';
+
+  selectedCategory = 'all';
+
+  isCategoriesAdminEnabled = false;
+
+  private readonly incrementalList = new IncrementalList<EnrichedTaskViewModel>(
+    TaskListComponent.PAGE_SIZE,
+  );
+
   private readonly taskFacade = inject(TaskFacade);
   private readonly categoryFacade = inject(CategoryFacade);
   private readonly alertController = inject(AlertController);
   private readonly router = inject(Router);
   private readonly remoteConfig = inject(RemoteConfigService);
-
-  get isCategoriesAdminEnabled(): boolean {
-    return this.remoteConfig.getBoolean(RemoteConfigKeys.enableCategories);
-  }
+  private readonly cdr = inject(ChangeDetectorRef);
 
   async ionViewWillEnter(): Promise<void> {
     await this.taskFacade.loadTasks();
     await this.categoryFacade.loadCategories();
-  }
-
-  get categories(): readonly CategoryViewModel[] {
-    return this.categoryFacade.categories;
-  }
-
-  get enrichedTasks(): readonly EnrichedTaskViewModel[] {
-    return TaskPresentationMapper.toEnrichedViewModels(this.taskFacade.tasks, this.categories);
-  }
-
-  get hasTasks(): boolean {
-    return this.taskFacade.tasks.length > 0;
-  }
-
-  get searchTerm(): string {
-    return this.taskFacade.searchTerm;
-  }
-
-  get selectedCategory(): string {
-    return this.taskFacade.selectedCategory;
+    this.syncViewState();
   }
 
   trackByTaskId(_index: number, task: EnrichedTaskViewModel): string {
@@ -71,10 +76,22 @@ export class TaskListComponent implements ViewWillEnter {
 
   onCategorySelected(id: string): void {
     this.taskFacade.selectCategory(id);
+    this.syncViewState();
   }
 
   onSearchChanged(value: string): void {
     this.taskFacade.search(value);
+    this.syncViewState();
+  }
+
+  onLoadMore(event: InfiniteScrollCustomEvent): void {
+    this.loadMoreTasks();
+    void event.target.complete();
+  }
+
+  loadMoreTasks(): void {
+    this.incrementalList.loadMore();
+    this.refreshVisibleTasks();
   }
 
   navigateToCategories(): void {
@@ -106,6 +123,7 @@ export class TaskListComponent implements ViewWillEnter {
       }
 
       this.closeCreateModal();
+      this.syncViewState();
     } catch {
       this.showToast('No fue posible completar la operación', 'danger');
     }
@@ -113,6 +131,7 @@ export class TaskListComponent implements ViewWillEnter {
 
   async onToggleCompleted(id: string): Promise<void> {
     await this.taskFacade.toggleCompleted(id);
+    this.syncViewState();
   }
 
   onEditTask(id: string): void {
@@ -149,6 +168,7 @@ export class TaskListComponent implements ViewWillEnter {
     try {
       await this.taskFacade.deleteTask(id);
       this.showToast('Tarea eliminada correctamente');
+      this.syncViewState();
     } catch {
       this.showToast('No fue posible completar la operación', 'danger');
     }
@@ -158,5 +178,27 @@ export class TaskListComponent implements ViewWillEnter {
     this.toastMessage = message;
     this.toastColor = color;
     this.toastOpen = true;
+    this.cdr.markForCheck();
+  }
+
+  private syncViewState(): void {
+    this.isCategoriesAdminEnabled = this.remoteConfig.getBoolean(RemoteConfigKeys.enableCategories);
+    this.categories = this.categoryFacade.categories;
+    const enrichedTasks = TaskPresentationMapper.toEnrichedViewModels(
+      this.taskFacade.tasks,
+      this.categories,
+    );
+    this.incrementalList.reset(enrichedTasks);
+    this.hasTasks = enrichedTasks.length > 0;
+    this.searchTerm = this.taskFacade.searchTerm;
+    this.selectedCategory = this.taskFacade.selectedCategory;
+    this.refreshVisibleTasks();
+  }
+
+  private refreshVisibleTasks(): void {
+    this.visibleTasks = this.incrementalList.items;
+    this.hasMoreVisibleTasks = this.incrementalList.hasMore;
+    this.showInfiniteScroll = this.incrementalList.total > TaskListComponent.PAGE_SIZE;
+    this.cdr.markForCheck();
   }
 }

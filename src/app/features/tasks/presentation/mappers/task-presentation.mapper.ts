@@ -8,15 +8,32 @@ import { TaskViewModel } from '../models/task.viewmodel';
  */
 export class TaskPresentationMapper {
   /**
+   * Construye un mapa de categorías indexado por id para búsquedas O(1).
+   */
+  static buildCategoryMap(
+    categories: readonly CategoryViewModel[],
+  ): ReadonlyMap<string, CategoryViewModel> {
+    return new Map(categories.map((category) => [category.id, category]));
+  }
+
+  /**
    * Construye un modelo visual enriquecido a partir de una tarea y las categorías disponibles.
    * @param task Modelo del agregado Task.
-   * @param categories Categorías disponibles en la UI.
+   * @param categories Categorías disponibles en la UI o mapa precalculado.
    */
   static toEnrichedViewModel(
     task: TaskViewModel,
     categories: readonly CategoryViewModel[],
+  ): EnrichedTaskViewModel;
+  static toEnrichedViewModel(
+    task: TaskViewModel,
+    categoryMap: ReadonlyMap<string, CategoryViewModel>,
+  ): EnrichedTaskViewModel;
+  static toEnrichedViewModel(
+    task: TaskViewModel,
+    categories: readonly CategoryViewModel[] | ReadonlyMap<string, CategoryViewModel>,
   ): EnrichedTaskViewModel {
-    const category = categories.find((item) => item.id === task.categoryId);
+    const category = TaskPresentationMapper.findCategory(task.categoryId, categories);
     const categoryLabel = category?.name ?? task.categoryId;
     const statusLabel = task.completed ? 'Completada' : 'Pendiente';
     const statusColor = task.completed ? 'success' : 'medium';
@@ -42,6 +59,19 @@ export class TaskPresentationMapper {
     tasks: readonly TaskViewModel[],
     categories: readonly CategoryViewModel[],
   ): readonly EnrichedTaskViewModel[] {
-    return tasks.map((task) => TaskPresentationMapper.toEnrichedViewModel(task, categories));
+    const categoryMap = TaskPresentationMapper.buildCategoryMap(categories);
+    return tasks.map((task) => TaskPresentationMapper.toEnrichedViewModel(task, categoryMap));
+  }
+
+  private static findCategory(
+    categoryId: string,
+    categories: readonly CategoryViewModel[] | ReadonlyMap<string, CategoryViewModel>,
+  ): CategoryViewModel | undefined {
+    if (categories instanceof Map) {
+      return categories.get(categoryId);
+    }
+
+    const categoryList = categories as readonly CategoryViewModel[];
+    return categoryList.find((item) => item.id === categoryId);
   }
 }

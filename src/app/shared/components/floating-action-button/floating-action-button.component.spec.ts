@@ -16,9 +16,9 @@ describe('FloatingActionButtonComponent', () => {
 
     fixture = TestBed.createComponent(FloatingActionButtonComponent);
     component = fixture.componentInstance;
-    component.icon = 'add';
-    component.ariaLabel = 'Crear tarea';
-    component.disabled = false;
+    fixture.componentRef.setInput('icon', 'add');
+    fixture.componentRef.setInput('ariaLabel', 'Crear tarea');
+    fixture.componentRef.setInput('disabled', false);
     fixture.detectChanges();
   }));
 
@@ -41,7 +41,7 @@ describe('FloatingActionButtonComponent', () => {
   });
 
   it('should reflect disabled state', () => {
-    component.disabled = true;
+    fixture.componentRef.setInput('disabled', true);
     fixture.detectChanges();
 
     const buttonDebugEl = fixture.debugElement.query(By.css('ion-fab-button'));

@@ -15,6 +15,7 @@ Referencia de arquitectura frontend en apps híbridas: dominio explícito, capas
 - [Arquitectura](#arquitectura)
 - [Funcionalidades](#funcionalidades)
 - [Inicio rápido](#inicio-rápido)
+- [Cordova (Android / iOS)](#cordova-android--ios)
 - [Firebase (Remote Config)](#firebase-remote-config)
 - [Calidad](#calidad)
 - [Documentación](#documentación)
@@ -61,16 +62,17 @@ Organizar tareas personales y laborales con categorías (Trabajo / Personal), b�
 
 ## Stack
 
-| Tecnología        | Versión / rol                                             |
-| ----------------- | --------------------------------------------------------- |
-| Angular           | 20 — framework, routing lazy, Reactive Forms              |
-| Ionic             | 8 — componentes UI e experiencia móvil                    |
-| TypeScript        | 5.9 — tipado estricto                                     |
-| SCSS              | Design System con CSS custom properties                   |
-| Capacitor         | 8 — base para despliegue nativo (dependencias instaladas) |
-| Firebase          | Remote Config vía AngularFire 20 (sin Firestore ni Auth)  |
-| Jasmine + Karma   | 117 tests unitarios                                       |
-| ESLint + Prettier | Lint y formato automatizado                               |
+| Tecnología        | Versión / rol                                                           |
+| ----------------- | ----------------------------------------------------------------------- |
+| Angular           | 20 — framework, routing lazy, Reactive Forms                            |
+| Ionic             | 8 — componentes UI e experiencia móvil                                  |
+| TypeScript        | 5.9 — tipado estricto                                                   |
+| SCSS              | Design System con CSS custom properties                                 |
+| Capacitor         | 8 — dependencias instaladas (convive con Cordova durante la transición) |
+| Cordova           | 13 — empaquetado nativo Android (`cordova-android@15`)                  |
+| Firebase          | Remote Config vía AngularFire 20 (sin Firestore ni Auth)                |
+| Jasmine + Karma   | 117 tests unitarios                                                     |
+| ESLint + Prettier | Lint y formato automatizado                                             |
 
 ---
 
@@ -146,7 +148,9 @@ Profundizar: [architecture.md](docs/architecture/architecture.md) · [capas](doc
 
 ## Inicio rápido
 
-**Requisitos:** Node.js ≥ 20 · npm ≥ 10
+**Requisitos web:** Node.js ≥ 20.17 · npm ≥ 10
+
+**Requisitos Android (Cordova):** JDK 17+, Android SDK Platform 36, Build Tools 36.x, `ANDROID_HOME` configurado. Detalle en [docs/cordova-environment.md](docs/cordova-environment.md).
 
 ```bash
 git clone <url-del-repositorio>
@@ -156,17 +160,128 @@ npm start          # http://localhost:4200
 npm run check      # pipeline completo antes de un PR o release
 ```
 
-| Script              | Descripción                                     |
-| ------------------- | ----------------------------------------------- |
-| `npm start`         | Servidor de desarrollo                          |
-| `npm run build`     | Build de producción en `www/`                   |
-| `npm test`          | Tests interactivos (Karma + watch)              |
-| `npm run test:ci`   | 117 tests en `ChromeHeadless`                   |
-| `npm run lint`      | ESLint                                          |
-| `npm run typecheck` | `tsc --noEmit`                                  |
-| `npm run check`     | **format → lint → typecheck → test:ci → build** |
+| Script                 | Descripción                                                 |
+| ---------------------- | ----------------------------------------------------------- |
+| `npm start`            | Servidor de desarrollo                                      |
+| `npm run build`        | Build de producción en `www/`                               |
+| `npm test`             | Tests interactivos (Karma + watch)                          |
+| `npm run test:ci`      | 117 tests en `ChromeHeadless`                               |
+| `npm run lint`         | ESLint                                                      |
+| `npm run typecheck`    | `tsc --noEmit`                                              |
+| `npm run check`        | **format → lint → typecheck → test:ci → build**             |
+| `npm run build:native` | `ng build` + `cordova prepare` (copia `www/` a plataformas) |
+| `npm run android`      | Build web + compilación APK debug de Android                |
+| `npm run android:run`  | Build web + instala y ejecuta en dispositivo/emulador       |
 
 ---
+
+## Cordova (Android / iOS)
+
+La aplicación se empaqueta con **Apache Cordova 13** sobre el proyecto existente. El código Angular/Ionic no se modifica: Cordova consume el artefacto web generado en `www/`.
+
+### Instalación de Cordova
+
+Cordova ya está incluido como dependencia de desarrollo. Tras clonar el repositorio:
+
+```bash
+npm install
+```
+
+Para instalar Cordova globalmente (opcional):
+
+```bash
+npm install -g cordova@13
+```
+
+Verificar versiones:
+
+```bash
+npx cordova -v          # 13.x
+node -v                 # >= 20.17.0
+java -version           # JDK 17+
+echo $ANDROID_HOME      # ruta al Android SDK
+```
+
+Configurar `JAVA_HOME` (recomendado):
+
+```bash
+export JAVA_HOME=$(dirname $(dirname $(readlink -f $(which java))))
+```
+
+### Plugin de routing (WebView)
+
+Se incluye `cordova-plugin-ionic-webview` para servir la app desde `https://localhost` y soportar el routing SPA de Angular (`PathLocationStrategy`) sin modificar el código fuente.
+
+### Compilación Android (APK)
+
+1. Asegúrate de tener el Android SDK (Platform 36, Build Tools 36.x) y JDK 17+.
+2. Si es la primera vez en tu máquina, añade la plataforma:
+
+```bash
+npx cordova platform add android@15.0.0
+```
+
+3. Compila:
+
+```bash
+npm run android
+```
+
+El APK debug se genera en:
+
+```text
+platforms/android/app/build/outputs/apk/debug/app-debug.apk
+```
+
+Para instalar en emulador o dispositivo conectado:
+
+```bash
+npm run android:run
+```
+
+APK de release (requiere keystore y firma):
+
+```bash
+npm run build:native
+npx cordova build android --release
+```
+
+### Preparación iOS (IPA)
+
+> **Requisito:** la compilación iOS solo es posible en **macOS** con Xcode instalado. No se puede generar un IPA desde Linux.
+
+Requisitos en macOS:
+
+| Herramienta | Versión mínima |
+| ----------- | -------------- |
+| Xcode       | 15+            |
+| CocoaPods   | 1.16+          |
+| ios-deploy  | 1.12.2+        |
+| Node.js     | 20.17+         |
+| cordova-ios | 8              |
+
+Pasos en macOS:
+
+```bash
+npm install
+npx cordova platform add ios@8.0.0
+npm run build:native
+npx cordova build ios
+```
+
+Abre el workspace en Xcode para firmar y generar el IPA:
+
+```bash
+open platforms/ios/*.xcworkspace
+```
+
+En Xcode: selecciona el target, configura **Signing & Capabilities** con tu Apple Developer Team y usa **Product → Archive** para distribuir en App Store o TestFlight.
+
+### Convivencia con Capacitor
+
+Las dependencias de Capacitor se mantienen temporalmente. Una vez verificado que Cordova compila y ejecuta correctamente en tus entornos objetivo, será seguro retirar `@capacitor/*` si no planeas usar Capacitor. Hasta entonces, no afectan al build de Cordova.
+
+Más detalle del entorno: [docs/cordova-environment.md](docs/cordova-environment.md).
 
 ## Firebase (Remote Config)
 
@@ -265,19 +380,20 @@ Guía de testing: [docs/testing.md](docs/testing.md)
 
 ## Documentación
 
-| Recurso                                                                              | Contenido                                    |
-| ------------------------------------------------------------------------------------ | -------------------------------------------- |
-| [docs/README.md](docs/README.md)                                                     | **Índice completo** de documentación técnica |
-| [docs/architecture/architecture.md](docs/architecture/architecture.md)               | Arquitectura consolidada                     |
-| [docs/architecture/dependency-flow.md](docs/architecture/dependency-flow.md)         | Flujos por operación                         |
-| [docs/design-system.md](docs/design-system.md)                                       | Tokens, componentes y motion                 |
-| [docs/accessibility.md](docs/accessibility.md)                                       | Mejoras orientadas a WCAG 2.2 AA             |
-| [docs/adr/ADR-001-angular-di-in-domain.md](docs/adr/ADR-001-angular-di-in-domain.md) | Angular DI en dominio                        |
-| [docs/RELEASE-v1.0.0.md](docs/RELEASE-v1.0.0.md)                                     | Notas técnicas del release                   |
-| [docs/contributing.md](docs/contributing.md)                                         | Guía para colaboradores                      |
-| [docs/releases.md](docs/releases.md)                                                 | Proceso de publicación                       |
-| [CHANGELOG.md](CHANGELOG.md)                                                         | Historial de cambios                         |
-| [ROADMAP.md](ROADMAP.md)                                                             | Planificación por sprints                    |
+| Recurso                                                                              | Contenido                                       |
+| ------------------------------------------------------------------------------------ | ----------------------------------------------- |
+| [docs/README.md](docs/README.md)                                                     | **Índice completo** de documentación técnica    |
+| [docs/architecture/architecture.md](docs/architecture/architecture.md)               | Arquitectura consolidada                        |
+| [docs/architecture/dependency-flow.md](docs/architecture/dependency-flow.md)         | Flujos por operación                            |
+| [docs/design-system.md](docs/design-system.md)                                       | Tokens, componentes y motion                    |
+| [docs/accessibility.md](docs/accessibility.md)                                       | Mejoras orientadas a WCAG 2.2 AA                |
+| [docs/adr/ADR-001-angular-di-in-domain.md](docs/adr/ADR-001-angular-di-in-domain.md) | Angular DI en dominio                           |
+| [docs/RELEASE-v1.0.0.md](docs/RELEASE-v1.0.0.md)                                     | Notas técnicas del release                      |
+| [docs/cordova-environment.md](docs/cordova-environment.md)                           | Requisitos del entorno Cordova (Node, JDK, SDK) |
+| [docs/contributing.md](docs/contributing.md)                                         | Guía para colaboradores                         |
+| [docs/releases.md](docs/releases.md)                                                 | Proceso de publicación                          |
+| [CHANGELOG.md](CHANGELOG.md)                                                         | Historial de cambios                            |
+| [ROADMAP.md](ROADMAP.md)                                                             | Planificación por sprints                       |
 
 ---
 

@@ -21,6 +21,8 @@
         [selected]="selectedCategory"
         (selectedChange)="onCategorySelected($event)"
       ></app-category-filter>
+
+      <app-task-benchmark-panel *ngIf="!isProduction"></app-task-benchmark-panel>
     </header>
 
     <main
@@ -39,7 +41,7 @@
       </ng-container>
 
       <ul *ngIf="hasTasks" class="task-list__list" aria-label="Lista de tareas">
-        <li *ngFor="let task of enrichedTasks; trackBy: trackByTaskId" class="task-list__item">
+        <li *ngFor="let task of visibleTasks; trackBy: trackByTaskId" class="task-list__item">
           <app-task-card
             [task]="task"
             (toggleCompleted)="onToggleCompleted($event)"
@@ -48,6 +50,14 @@
           ></app-task-card>
         </li>
       </ul>
+
+      <ion-infinite-scroll
+        *ngIf="hasTasks && showInfiniteScroll"
+        (ionInfinite)="onLoadMore($event)"
+        [disabled]="!hasMoreVisibleTasks"
+      >
+        <ion-infinite-scroll-content></ion-infinite-scroll-content>
+      </ion-infinite-scroll>
     </main>
   </div>
 

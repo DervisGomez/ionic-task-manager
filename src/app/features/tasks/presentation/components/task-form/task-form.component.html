@@ -98,7 +98,7 @@
           [attr.aria-describedby]="categoryDescribedBy"
         >
           <button
-            *ngFor="let category of categories"
+            *ngFor="let category of categories; trackBy: trackByCategoryId"
             type="button"
             class="task-form__category-chip"
             [id]="getCategoryChipId(category.id)"
