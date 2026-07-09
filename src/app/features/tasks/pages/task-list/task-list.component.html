@@ -4,8 +4,8 @@
       <app-page-header
         title="Gestor de tareas"
         subtitle="Organiza tu día y enfócate en lo importante."
-        actionIcon="pricetags-outline"
-        actionAriaLabel="Administrar categorías"
+        [actionIcon]="isCategoriesAdminEnabled ? 'pricetags-outline' : undefined"
+        [actionAriaLabel]="isCategoriesAdminEnabled ? 'Administrar categorías' : undefined"
         (action)="navigateToCategories()"
       ></app-page-header>
 

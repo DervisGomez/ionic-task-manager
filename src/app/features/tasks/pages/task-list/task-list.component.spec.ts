@@ -3,6 +3,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AlertController, AlertButton, IonicModule } from '@ionic/angular';
 
+import { RemoteConfigKeys } from '@core/firebase/remote-config.keys';
+import { RemoteConfigService } from '@core/firebase/services/remote-config.service';
 import { SharedModule } from '@shared/shared.module';
 
 import { CategoryFacade } from '@features/categories/presentation/facades/category.facade';
@@ -22,6 +24,7 @@ describe('TaskListComponent', () => {
   let alertControllerSpy: jasmine.SpyObj<AlertController>;
   let alertElementSpy: jasmine.SpyObj<HTMLIonAlertElement>;
   let routerSpy: jasmine.SpyObj<Router>;
+  let remoteConfigSpy: jasmine.SpyObj<RemoteConfigService>;
   let alertConfig: Parameters<AlertController['create']>[0];
 
   const editingTask: TaskViewModel = {
@@ -82,6 +85,13 @@ describe('TaskListComponent', () => {
     routerSpy = jasmine.createSpyObj<Router>('Router', ['navigate']);
     routerSpy.navigate.and.resolveTo(true);
 
+    remoteConfigSpy = jasmine.createSpyObj<RemoteConfigService>('RemoteConfigService', [
+      'getBoolean',
+    ]);
+    remoteConfigSpy.getBoolean.and.callFake(
+      (key: string) => key === RemoteConfigKeys.enableCategories,
+    );
+
     TestBed.configureTestingModule({
       declarations: [TaskListComponent, TaskFormComponent, TaskCardComponent],
       imports: [ReactiveFormsModule, IonicModule.forRoot(), SharedModule],
@@ -90,6 +100,7 @@ describe('TaskListComponent', () => {
         { provide: CategoryFacade, useValue: categoryFacadeSpy },
         { provide: AlertController, useValue: alertControllerSpy },
         { provide: Router, useValue: routerSpy },
+        { provide: RemoteConfigService, useValue: remoteConfigSpy },
       ],
     }).compileComponents();
 
@@ -127,6 +138,25 @@ describe('TaskListComponent', () => {
     component.navigateToCategories();
 
     expect(routerSpy.navigate).toHaveBeenCalledOnceWith(['/categories']);
+  });
+
+  it('oculta el botón de administrar categorías cuando el feature flag está deshabilitado', () => {
+    remoteConfigSpy.getBoolean.and.returnValue(false);
+    fixture.detectChanges();
+
+    const actionButton = fixture.nativeElement.querySelector(
+      'app-page-header .page-header__action',
+    ) as HTMLElement;
+
+    expect(actionButton).toBeNull();
+  });
+
+  it('no navega a /categories cuando el feature flag está deshabilitado', () => {
+    remoteConfigSpy.getBoolean.and.returnValue(false);
+
+    component.navigateToCategories();
+
+    expect(routerSpy.navigate).not.toHaveBeenCalled();
   });
 
   it('onCategorySelected delega en TaskFacade.selectCategory', () => {

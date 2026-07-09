@@ -2,6 +2,8 @@ import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { AlertController, ViewWillEnter } from '@ionic/angular';
 
+import { RemoteConfigKeys } from '@core/firebase/remote-config.keys';
+import { RemoteConfigService } from '@core/firebase/services/remote-config.service';
 import { CategoryFacade } from '@features/categories/presentation/facades/category.facade';
 import { CategoryViewModel } from '@features/categories/presentation/models/category.viewmodel';
 
@@ -32,6 +34,11 @@ export class TaskListComponent implements ViewWillEnter {
   private readonly categoryFacade = inject(CategoryFacade);
   private readonly alertController = inject(AlertController);
   private readonly router = inject(Router);
+  private readonly remoteConfig = inject(RemoteConfigService);
+
+  get isCategoriesAdminEnabled(): boolean {
+    return this.remoteConfig.getBoolean(RemoteConfigKeys.enableCategories);
+  }
 
   async ionViewWillEnter(): Promise<void> {
     await this.taskFacade.loadTasks();
@@ -71,6 +78,10 @@ export class TaskListComponent implements ViewWillEnter {
   }
 
   navigateToCategories(): void {
+    if (!this.isCategoriesAdminEnabled) {
+      return;
+    }
+
     void this.router.navigate(['/categories']);
   }
 

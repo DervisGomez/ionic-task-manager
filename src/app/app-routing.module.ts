@@ -1,6 +1,8 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 
+import { categoriesFeatureGuard } from '@core/firebase/guards/categories-feature.guard';
+
 const routes: Routes = [
   {
     path: 'tasks',
@@ -8,6 +10,7 @@ const routes: Routes = [
   },
   {
     path: 'categories',
+    canActivate: [categoriesFeatureGuard],
     loadChildren: () =>
       import('@features/categories/categories.module').then((m) => m.CategoriesModule),
   },

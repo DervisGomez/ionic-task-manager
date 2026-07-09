@@ -4,6 +4,7 @@ import { RouteReuseStrategy } from '@angular/router';
 
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 
+import { FIREBASE_APP_PROVIDERS, FIREBASE_PROVIDERS } from '@core/firebase/firebase.providers';
 import { CATEGORIES_PROVIDERS } from '@features/categories/categories.providers';
 import { TASKS_PROVIDERS } from '@features/tasks/tasks.providers';
 
@@ -15,6 +16,8 @@ import { AppRoutingModule } from './app-routing.module';
   imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule],
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+    ...FIREBASE_PROVIDERS,
+    ...FIREBASE_APP_PROVIDERS,
     ...CATEGORIES_PROVIDERS,
     ...TASKS_PROVIDERS,
   ],
