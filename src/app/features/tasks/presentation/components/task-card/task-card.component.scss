@@ -1,143 +1,250 @@
-$meta-pill-height: calc(var(--app-spacing-lg) + var(--app-spacing-xs));
-$meta-pill-padding-inline: var(--app-spacing-sm);
-$meta-pill-padding-block: var(--app-spacing-xs);
-$checkbox-offset: calc(var(--app-spacing-lg) + var(--app-spacing-sm));
-
-:host {
+app-task-card {
   display: block;
+  width: 100%;
 }
 
 .task-card {
+  --task-card-el-transition:
+    opacity var(--app-transition-interactive), color var(--app-transition-interactive),
+    background var(--app-transition-interactive), border-color var(--app-transition-interactive);
+  position: relative;
   margin: 0;
+  overflow: hidden;
   border: 1px solid var(--app-color-border);
   border-radius: var(--app-radius-lg);
   background: var(--app-color-surface);
-  box-shadow: var(--app-shadow-md);
+  box-shadow: var(--app-shadow-sm);
   transition:
-    box-shadow var(--app-transition-fast),
-    border-color var(--app-transition-fast);
+    transform var(--app-transition-interactive),
+    box-shadow var(--app-transition-interactive),
+    border-color var(--app-transition-interactive),
+    background-color var(--app-transition-interactive);
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: var(--app-radius-xs);
+    background: color-mix(in srgb, var(--ion-color-primary) 55%, var(--app-color-border));
+    opacity: 0.85;
+    transition: opacity var(--app-transition-interactive);
+  }
 
   @media (hover: hover) and (pointer: fine) {
     &:hover {
-      border-color: color-mix(in srgb, var(--app-color-border) 65%, var(--ion-color-primary));
-      box-shadow: var(--app-shadow-lg);
+      border-color: color-mix(in srgb, var(--app-color-border) 45%, var(--ion-color-primary));
+      box-shadow: var(--app-shadow-md);
+      transform: translateY(calc(var(--app-spacing-xs) * -0.25));
+
+      &::before {
+        opacity: 1;
+      }
+
+      .task-card__actions {
+        opacity: 1;
+      }
     }
   }
 }
 
 .task-card__content {
-  display: flex;
-  flex-direction: column;
-  gap: var(--app-spacing-sm);
-  padding: var(--app-spacing-lg);
+  padding: var(--app-spacing-md);
+  padding-inline-start: calc(var(--app-spacing-md) + var(--app-radius-xs));
 }
 
-.task-card__header {
-  display: flex;
-  align-items: center;
-  gap: var(--app-spacing-sm);
+.task-card__header,
+.task-card__title-row,
+.task-card__main,
+.task-card__title {
   min-width: 0;
+}
+
+.task-card__header,
+.task-card__title-row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--app-spacing-sm);
 }
 
 .task-card__checkbox {
   flex-shrink: 0;
-  margin: 0;
+  margin: var(--app-spacing-xs) 0 0;
+  --size: var(--app-size-checkbox);
+  --border-radius: var(--app-radius-sm);
+  --border-color: var(--app-color-border);
+  --border-color-checked: var(--ion-color-primary);
+  --checkbox-background-checked: var(--ion-color-primary);
+  --checkmark-color: var(--ion-color-primary-contrast);
+}
+
+.task-card__main {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--app-spacing-sm);
+}
+
+.task-card__title,
+.task-card__description,
+.task-card__meta,
+.task-card__category,
+.task-card__status,
+.task-card__checkbox {
+  transition: var(--task-card-el-transition);
 }
 
 .task-card__title {
   flex: 1;
-  min-width: 0;
   margin: 0;
-  font-size: var(--app-font-size-md);
-  font-weight: var(--app-font-weight-bold);
-  line-height: var(--app-line-height-tight);
+  padding-top: var(--app-spacing-xs);
+  font-size: var(--app-text-body);
+  font-weight: var(--app-font-weight-semibold);
   color: var(--app-color-text-primary);
 }
 
 .task-card__description {
   margin: 0;
-  padding-left: $checkbox-offset;
-  font-size: var(--app-font-size-sm);
-  font-weight: var(--app-font-weight-regular);
+  font-size: var(--app-text-body-sm);
   line-height: var(--app-line-height-relaxed);
   color: var(--app-color-text-secondary);
 }
 
+.task-card__description:not(.task-card__description--expanded) {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
+.task-card__toggle {
+  z-index: 1;
+  margin: var(--app-spacing-xs) 0 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: var(--app-text-caption);
+  font-weight: var(--app-font-weight-medium);
+  color: var(--ion-color-primary);
+  cursor: pointer;
+}
+
 .task-card__meta {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
+  justify-content: space-between;
   gap: var(--app-spacing-sm);
-  padding-left: $checkbox-offset;
+  margin-top: var(--app-spacing-xs);
+  padding-top: var(--app-spacing-sm);
+  border-top: 1px solid var(--app-color-border);
+
+  &--status-only {
+    justify-content: flex-end;
+  }
 }
 
 .task-card__category,
 .task-card__status {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  min-height: $meta-pill-height;
-  margin: 0;
-  padding: $meta-pill-padding-block $meta-pill-padding-inline;
+  min-height: var(--app-size-pill-height);
+  padding: var(--app-spacing-xs) var(--app-spacing-sm);
   border-radius: var(--app-radius-sm);
-  font-size: var(--app-font-size-xs);
+  font-size: var(--app-text-caption);
   font-weight: var(--app-font-weight-medium);
   line-height: var(--app-line-height-tight);
 }
 
 .task-card__category {
-  --background: color-mix(in srgb, var(--ion-color-primary) 8%, var(--app-color-surface));
-  --color: var(--app-color-text-primary);
-  height: $meta-pill-height;
+  border: 1px solid color-mix(in srgb, var(--ion-color-primary) 18%, var(--app-color-border));
+  color: var(--ion-color-primary);
+  background: color-mix(in srgb, var(--ion-color-primary) 7%, var(--app-color-surface));
 }
 
 .task-card__status {
-  height: $meta-pill-height;
+  --padding-start: var(--app-spacing-sm);
+  --padding-end: var(--app-spacing-sm);
+  --padding-top: var(--app-spacing-xs);
+  --padding-bottom: var(--app-spacing-xs);
+  border: 1px solid var(--app-color-border);
+  text-transform: none;
+
+  &[color='medium'] {
+    --background: color-mix(in srgb, var(--app-color-text-secondary) 10%, var(--app-color-surface));
+    --color: var(--app-color-text-secondary);
+  }
+
+  &[color='success'] {
+    --background: color-mix(in srgb, var(--ion-color-success) 12%, var(--app-color-surface));
+    --color: color-mix(in srgb, var(--ion-color-success) 78%, var(--app-color-text-primary));
+    border-color: color-mix(in srgb, var(--ion-color-success) 22%, var(--app-color-border));
+  }
 }
 
 .task-card__actions {
   display: flex;
   flex-shrink: 0;
-  align-items: center;
-  gap: 0;
-}
-
-.task-card__actions ion-button {
-  margin: 0;
-  --padding-start: var(--app-spacing-xs);
-  --padding-end: var(--app-spacing-xs);
-  --padding-top: var(--app-spacing-xs);
-  --padding-bottom: var(--app-spacing-xs);
-
-  ion-icon {
-    font-size: var(--app-font-size-md);
-  }
-
-  &::part(native) {
-    transition:
-      background-color var(--app-transition-fast),
-      opacity var(--app-transition-fast),
-      transform var(--app-transition-fast);
-  }
+  margin: calc(var(--app-spacing-xs) * -1) 0 0;
+  transition: opacity var(--app-transition-interactive);
 
   @media (hover: hover) and (pointer: fine) {
-    &:hover::part(native) {
-      opacity: 0.9;
-      background: color-mix(in srgb, var(--ion-color-primary) 6%, transparent);
-    }
+    opacity: 0.45;
   }
 
-  &:active::part(native) {
-    transform: scale(0.96);
-    opacity: 0.8;
+  ion-button {
+    margin: 0;
+    --padding-start: var(--app-spacing-xs);
+    --padding-end: var(--app-spacing-xs);
+
+    ion-icon {
+      font-size: var(--app-text-body);
+    }
   }
 }
 
-.task-card__actions ion-button[color='danger'] {
-  @media (hover: hover) and (pointer: fine) {
-    &:hover::part(native) {
-      background: color-mix(in srgb, var(--ion-color-danger) 8%, transparent);
-    }
+.task-card--category-personal {
+  &::before {
+    background: color-mix(in srgb, var(--ion-color-warning) 65%, var(--app-color-border));
+  }
+
+  .task-card__category {
+    border-color: color-mix(in srgb, var(--ion-color-warning) 24%, var(--app-color-border));
+    color: color-mix(in srgb, var(--ion-color-warning) 82%, var(--app-color-text-primary));
+    background: color-mix(in srgb, var(--ion-color-warning) 10%, var(--app-color-surface));
+  }
+}
+
+.task-card--completed {
+  background: color-mix(in srgb, var(--ion-background-color) 35%, var(--app-color-surface));
+
+  &::before {
+    opacity: 0.35;
+  }
+
+  .task-card__title {
+    color: var(--app-color-text-secondary);
+    text-decoration: line-through;
+    opacity: 0.82;
+  }
+
+  .task-card__description,
+  .task-card__meta {
+    opacity: 0.75;
+  }
+}
+
+@media (min-width: 768px) {
+  .task-card__content {
+    padding: var(--app-spacing-lg);
+    padding-inline-start: calc(var(--app-spacing-lg) + var(--app-radius-xs));
+  }
+
+  .task-card__header,
+  .task-card__main {
+    gap: var(--app-spacing-md);
+  }
+
+  .task-card__title {
+    font-size: var(--app-text-title-section);
   }
 }

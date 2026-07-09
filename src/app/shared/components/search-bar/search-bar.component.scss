@@ -8,24 +8,21 @@
     --box-shadow: none;
     --border-radius: var(--app-radius-lg);
     --icon-color: var(--app-color-text-secondary);
-    --placeholder-color: color-mix(
-      in srgb,
-      var(--app-color-text-secondary) 55%,
-      var(--app-color-text-primary)
-    );
+    --placeholder-color: var(--app-color-text-placeholder);
     --placeholder-opacity: 1;
     --color: var(--app-color-text-primary);
-    min-height: calc(var(--app-spacing-xl) + var(--app-spacing-sm));
+    min-height: var(--app-size-input-min-height);
     padding: 0;
     border: 1px solid var(--app-color-border);
     border-radius: var(--app-radius-lg);
     transition:
-      border-color var(--app-transition-fast),
-      box-shadow var(--app-transition-fast);
+      border-color var(--app-transition-interactive),
+      box-shadow var(--app-transition-interactive);
   }
 
   &:focus-within ion-searchbar {
     --box-shadow: var(--app-shadow-sm);
-    border-color: color-mix(in srgb, var(--ion-color-primary) 35%, var(--app-color-border));
+    border-color: color-mix(in srgb, var(--ion-color-primary) 40%, var(--app-color-border));
+    box-shadow: var(--app-shadow-focus);
   }
 }

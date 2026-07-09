@@ -1,0 +1,20 @@
+// Motion durations, easing & transition presets
+:root {
+  --app-duration-fast: 150ms;
+  --app-duration-medium: 200ms;
+
+  --app-easing-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --app-easing-enter: cubic-bezier(0, 0, 0.2, 1);
+
+  --app-transition-fast: var(--app-duration-fast) var(--app-easing-standard);
+  --app-transition-base: var(--app-duration-medium) var(--app-easing-standard);
+  --app-transition-slow: var(--app-duration-medium) var(--app-easing-enter);
+
+  --app-transition-interactive: var(--app-duration-fast) var(--app-easing-standard);
+  --app-transition-emphasis: var(--app-duration-medium) var(--app-easing-enter);
+
+  --app-enter-delay: 0ms;
+
+  --app-focus-ring-width: 2px;
+  --app-focus-ring-offset: 2px;
+}

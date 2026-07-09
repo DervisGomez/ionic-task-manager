@@ -27,6 +27,7 @@ describe('EmptyStateComponent', () => {
   it('should render the title', () => {
     const title = fixture.nativeElement.querySelector('.empty-state__title');
     expect(title?.textContent).toContain('Aun no hay tareas');
+    expect(title?.id).toBe(component.titleId);
   });
 
   it('should render the description', () => {

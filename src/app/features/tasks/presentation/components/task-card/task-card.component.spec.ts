@@ -49,10 +49,36 @@ describe('TaskCardComponent', () => {
     expect(description.textContent?.trim()).toBe(task.description);
   });
 
+  it('no renderiza descripción cuando está vacía', () => {
+    component.task = { ...task, description: '' };
+    fixture.detectChanges();
+
+    const description = fixture.debugElement.query(By.css('.task-card__description'));
+
+    expect(description).toBeNull();
+  });
+
+  it('aplica estado visual completado en la tarjeta', () => {
+    const card = fixture.debugElement.query(By.css('.task-card--completed'));
+
+    expect(card).toBeTruthy();
+  });
+
   it('renderiza categoryLabel', () => {
     const category = fixture.debugElement.query(By.css('.task-card__category'))
       .nativeElement as HTMLElement;
     expect(category.textContent?.trim()).toBe(task.categoryLabel);
+  });
+
+  it('no muestra categoría cuando la tarea no tiene categoría', () => {
+    component.task = { ...task, categoryId: '', categoryLabel: '' };
+    fixture.detectChanges();
+
+    const category = fixture.debugElement.query(By.css('.task-card__category'));
+    const meta = fixture.debugElement.query(By.css('.task-card__meta--status-only'));
+
+    expect(category).toBeNull();
+    expect(meta).toBeTruthy();
   });
 
   it('renderiza statusLabel', () => {
@@ -97,9 +123,119 @@ describe('TaskCardComponent', () => {
     expect(checkbox.getAttribute('aria-label')).toBe('Marcar "Planificar sprint" como pendiente');
   });
 
+  it('expone aria-label contextual en el botón Ver más', () => {
+    const longDescription =
+      'Texto largo que supera el umbral para mostrar el control de expansión en la tarjeta de tarea dentro del listado principal de la aplicación.';
+    component.task = { ...task, description: longDescription };
+    fixture.detectChanges();
+
+    const toggle = fixture.debugElement.query(By.css('.task-card__toggle'))
+      .nativeElement as HTMLButtonElement;
+
+    expect(toggle.getAttribute('aria-label')).toBe('Expandir descripción de Planificar sprint');
+  });
+
   it('asocia el artículo con el título mediante aria-labelledby', () => {
     const card = fixture.debugElement.query(By.css('ion-card')).nativeElement as HTMLElement;
 
     expect(card.getAttribute('aria-labelledby')).toBe(`task-title-${task.id}`);
+  });
+
+  it('no muestra Ver más cuando la descripción es corta', () => {
+    const toggle = fixture.debugElement.query(By.css('.task-card__toggle'));
+
+    expect(toggle).toBeNull();
+  });
+
+  it('expande y colapsa descripciones largas', () => {
+    const longDescription =
+      'Texto largo que supera el umbral para mostrar el control de expansión en la tarjeta de tarea dentro del listado principal de la aplicación.';
+    component.task = { ...task, description: longDescription };
+    fixture.detectChanges();
+
+    const description = fixture.debugElement.query(By.css('.task-card__description'))
+      .nativeElement as HTMLElement;
+    const toggle = fixture.debugElement.query(By.css('.task-card__toggle'))
+      .nativeElement as HTMLButtonElement;
+
+    expect(toggle.textContent?.trim()).toBe('Ver más');
+    expect(description.classList.contains('task-card__description--expanded')).toBeFalse();
+
+    toggle.click();
+    fixture.detectChanges();
+
+    expect(description.classList.contains('task-card__description--expanded')).toBeTrue();
+    expect(toggle.textContent?.trim()).toBe('Ver menos');
+    expect(toggle.getAttribute('aria-expanded')).toBe('true');
+
+    toggle.click();
+    fixture.detectChanges();
+
+    expect(description.classList.contains('task-card__description--expanded')).toBeFalse();
+    expect(toggle.getAttribute('aria-expanded')).toBe('false');
+  });
+
+  it('reinicia la expansión cuando cambia la tarea', () => {
+    component.task = {
+      ...task,
+      id: 'task-2',
+      description:
+        'Otra descripción suficientemente larga para activar el botón Ver más en la tarjeta de tarea del listado.',
+    };
+    fixture.detectChanges();
+
+    component.toggleDescription(new Event('click'));
+    fixture.detectChanges();
+
+    component.task = {
+      ...task,
+      id: 'task-3',
+      description:
+        'Tercera descripción larga que también debe mostrar el control Ver más tras actualizar la tarea.',
+    };
+    component.ngOnChanges({
+      task: {
+        currentValue: component.task,
+        previousValue: { ...task, id: 'task-2' },
+        firstChange: false,
+        isFirstChange: () => false,
+      },
+    });
+    fixture.detectChanges();
+
+    const description = fixture.debugElement.query(By.css('.task-card__description'))
+      .nativeElement as HTMLElement;
+
+    expect(component.isDescriptionExpanded).toBeFalse();
+    expect(description.classList.contains('task-card__description--expanded')).toBeFalse();
+  });
+
+  it('mantiene la expansión cuando la tarea recibe una nueva referencia con el mismo id', () => {
+    const longDescription =
+      'Texto largo que supera el umbral para mostrar el control de expansión en la tarjeta de tarea dentro del listado principal de la aplicación.';
+
+    component.task = { ...task, description: longDescription };
+    fixture.detectChanges();
+
+    component.toggleDescription(new Event('click'));
+    fixture.detectChanges();
+
+    const previousTask = component.task;
+    component.task = { ...previousTask, description: longDescription };
+    component.ngOnChanges({
+      task: {
+        currentValue: component.task,
+        previousValue: previousTask,
+        firstChange: false,
+        isFirstChange: () => false,
+      },
+    });
+    fixture.detectChanges();
+
+    const description = fixture.debugElement.query(By.css('.task-card__description'))
+      .nativeElement as HTMLElement;
+
+    expect(component.isDescriptionExpanded).toBeTrue();
+    expect(description.classList.contains('task-card__description--expanded')).toBeTrue();
   });
 });

@@ -1,0 +1,101 @@
+// ==========================================================================
+// Motion — keyframes, interactions, loading hooks, reduced motion
+// ==========================================================================
+
+@keyframes app-enter-rise {
+  from {
+    opacity: 0;
+    transform: translateY(var(--app-spacing-sm));
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes app-fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes app-modal-enter {
+  from {
+    opacity: 0;
+    transform: translateY(var(--app-spacing-sm)) scale(0.99);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+// Future loading animations — structure only (no skeleton yet)
+.app-loading {
+  &__region {
+    position: relative;
+    overflow: hidden;
+  }
+
+  &__pulse,
+  &__shimmer {
+    opacity: 0;
+    pointer-events: none;
+  }
+}
+
+// Shared interactive button affordances
+ion-button::part(native),
+ion-fab-button::part(native) {
+  transition:
+    background-color var(--app-transition-interactive),
+    box-shadow var(--app-transition-interactive),
+    transform var(--app-transition-interactive),
+    opacity var(--app-transition-interactive);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  ion-button:hover::part(native) {
+    opacity: 0.94;
+  }
+}
+
+ion-button:active::part(native),
+ion-fab-button:active::part(native) {
+  transform: scale(0.98);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  ion-button[fill='clear']:hover::part(native) {
+    background: color-mix(in srgb, var(--ion-color-primary) 8%, transparent);
+  }
+
+  ion-button[fill='clear'][color='danger']:hover::part(native) {
+    background: color-mix(in srgb, var(--ion-color-danger) 10%, transparent);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --app-duration-fast: 0ms;
+    --app-duration-medium: 0ms;
+    --app-transition-fast: 0ms linear;
+    --app-transition-base: 0ms linear;
+    --app-transition-slow: 0ms linear;
+    --app-transition-interactive: 0ms linear;
+    --app-transition-emphasis: 0ms linear;
+    --app-enter-delay: 0ms;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+  }
+}

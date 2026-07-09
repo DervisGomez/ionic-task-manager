@@ -7,6 +7,10 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
   standalone: false,
 })
 export class EmptyStateComponent {
+  private static nextId = 0;
+
+  readonly titleId = `empty-state-title-${EmptyStateComponent.nextId++}`;
+
   /**
    * Nombre del icono mostrado en el estado vacio.
    */

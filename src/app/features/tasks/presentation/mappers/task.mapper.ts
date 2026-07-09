@@ -1,15 +1,10 @@
 import { Task } from '../../domain/entities/task.model';
+import { getTaskCategoryLabel } from '../../shared/catalogs/task-categories.catalog';
 import { TaskViewModel } from '../models/task.viewmodel';
 
 export class TaskMapper {
-  private static readonly CATEGORY_LABELS: Record<string, string> = {
-    personal: 'Personal',
-    work: 'Trabajo',
-    shopping: 'Compras',
-  };
-
   static toViewModel(task: Task): TaskViewModel {
-    const categoryLabel = TaskMapper.CATEGORY_LABELS[task.categoryId] ?? task.categoryId;
+    const categoryLabel = getTaskCategoryLabel(task.categoryId);
     const statusLabel = task.completed ? 'Completada' : 'Pendiente';
     const statusColor = task.completed ? 'success' : 'medium';
 

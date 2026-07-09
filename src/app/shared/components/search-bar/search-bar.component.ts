@@ -7,6 +7,10 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
   standalone: false,
 })
 export class SearchBarComponent {
+  private static nextId = 0;
+
+  readonly labelId = `app-search-label-${SearchBarComponent.nextId++}`;
+
   /** Placeholder text displayed in the search field. */
   @Input() placeholder = 'Buscar...';
 
@@ -24,6 +28,10 @@ export class SearchBarComponent {
 
   /** Emits the current search value as a plain string. */
   @Output() readonly valueChange = new EventEmitter<string>();
+
+  get accessibleLabel(): string {
+    return this.ariaLabel ?? this.placeholder;
+  }
 
   onInput(event: Event): void {
     const { value } = (event as CustomEvent<{ value?: string }>).detail;

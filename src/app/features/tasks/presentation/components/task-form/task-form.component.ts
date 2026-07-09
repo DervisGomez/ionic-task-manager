@@ -2,15 +2,21 @@ import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 import { CreateTaskCommand } from '../../../domain/commands/create-task.command';
+import {
+  getSelectableTaskCategories,
+  getSelectableTaskCategoryIds,
+  SelectableTaskCategoryId,
+} from '../../../shared/catalogs/task-categories.catalog';
 import { TaskViewModel } from '../../models/task.viewmodel';
 
 @Component({
   selector: 'app-task-form',
   templateUrl: './task-form.component.html',
-  styleUrls: ['./task-form.component.scss'],
   standalone: false,
 })
 export class TaskFormComponent implements OnChanges {
+  readonly categoryOptions = getSelectableTaskCategories();
+
   @Input() task?: TaskViewModel;
 
   @Input() submitButtonText = 'Guardar';
@@ -31,6 +37,7 @@ export class TaskFormComponent implements OnChanges {
     }),
     categoryId: new FormControl('', {
       nonNullable: true,
+      validators: [Validators.required],
     }),
   });
 
@@ -71,7 +78,81 @@ export class TaskFormComponent implements OnChanges {
     this.cancel.emit();
   }
 
-  getFieldError(fieldName: 'title' | 'description'): string | undefined {
+  selectCategory(categoryId: SelectableTaskCategoryId): void {
+    this.form.controls.categoryId.setValue(categoryId);
+    this.focusCategory(categoryId);
+  }
+
+  onCategoryKeydown(event: KeyboardEvent, categoryId: SelectableTaskCategoryId): void {
+    if (event.key === ' ' || event.key === 'Enter') {
+      event.preventDefault();
+      this.selectCategory(categoryId);
+      return;
+    }
+
+    if (!['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End'].includes(event.key)) {
+      return;
+    }
+
+    event.preventDefault();
+
+    const options = getSelectableTaskCategoryIds();
+    const currentIndex = options.indexOf(categoryId);
+    let nextIndex = currentIndex;
+
+    switch (event.key) {
+      case 'ArrowRight':
+      case 'ArrowDown':
+        nextIndex = (currentIndex + 1) % options.length;
+        break;
+      case 'ArrowLeft':
+      case 'ArrowUp':
+        nextIndex = (currentIndex - 1 + options.length) % options.length;
+        break;
+      case 'Home':
+        nextIndex = 0;
+        break;
+      case 'End':
+        nextIndex = options.length - 1;
+        break;
+    }
+
+    const nextCategory = options[nextIndex];
+    this.form.controls.categoryId.setValue(nextCategory);
+    this.focusCategory(nextCategory);
+  }
+
+  get isEditing(): boolean {
+    return this.task !== undefined;
+  }
+
+  get headerTitle(): string {
+    return this.isEditing ? 'Editar tarea' : 'Nueva tarea';
+  }
+
+  get headerDescription(): string {
+    return this.isEditing
+      ? 'Actualiza la información de esta tarea.'
+      : 'Crea una nueva tarea para mantenerte organizado.';
+  }
+
+  get descriptionDescribedBy(): string | null {
+    if (this.getFieldError('description')) {
+      return 'task-description-error';
+    }
+
+    return 'task-description-helper';
+  }
+
+  get categoryDescribedBy(): string | null {
+    if (this.getFieldError('categoryId')) {
+      return 'task-category-error';
+    }
+
+    return 'task-form-category-helper';
+  }
+
+  getFieldError(fieldName: 'title' | 'description' | 'categoryId'): string | undefined {
     const control = this.form.controls[fieldName];
 
     if (!control.touched || !control.invalid) {
@@ -79,7 +160,7 @@ export class TaskFormComponent implements OnChanges {
     }
 
     if (control.errors?.['required']) {
-      return 'Este campo es obligatorio';
+      return fieldName === 'categoryId' ? 'Selecciona una categoría' : 'Este campo es obligatorio';
     }
 
     if (control.errors?.['maxlength']) {
@@ -88,5 +169,13 @@ export class TaskFormComponent implements OnChanges {
     }
 
     return undefined;
+  }
+
+  getCategoryChipId(categoryId: SelectableTaskCategoryId): string {
+    return `task-form-category-${categoryId}`;
+  }
+
+  private focusCategory(categoryId: SelectableTaskCategoryId): void {
+    document.getElementById(this.getCategoryChipId(categoryId))?.focus();
   }
 }

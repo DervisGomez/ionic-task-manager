@@ -1,10 +1,10 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { AlertController } from '@ionic/angular';
 
-import { FilterOption } from '@shared/models/filter-option.model';
 import { CreateTaskCommand } from '../../domain/commands/create-task.command';
 import { TaskFacade } from '../../presentation/facades/task.facade';
 import { TaskViewModel } from '../../presentation/models/task.viewmodel';
+import { getTaskListFilterOptions } from '../../shared/catalogs/task-categories.catalog';
 
 @Component({
   selector: 'app-task-list',
@@ -13,11 +13,7 @@ import { TaskViewModel } from '../../presentation/models/task.viewmodel';
   standalone: false,
 })
 export class TaskListComponent implements OnInit {
-  readonly categories: readonly FilterOption[] = [
-    { id: 'all', label: 'Todas' },
-    { id: 'work', label: 'Trabajo' },
-    { id: 'personal', label: 'Personal' },
-  ];
+  readonly categories = getTaskListFilterOptions();
 
   isCreateModalOpen = false;
 
@@ -50,6 +46,10 @@ export class TaskListComponent implements OnInit {
 
   get selectedCategory(): string {
     return this.taskFacade.selectedCategory;
+  }
+
+  trackByTaskId(_index: number, task: TaskViewModel): string {
+    return task.id;
   }
 
   onCategorySelected(id: string): void {

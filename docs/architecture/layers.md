@@ -16,7 +16,7 @@ Repository
 
 **Responsabilidad**
 
-Interactuar con el usuario. Incluye páginas, componentes de UI, facades y el estado de pantalla. Orquesta las acciones del usuario delegando la lógica de negocio al dominio y reflejando el resultado en la interfaz.
+Interactuar con el usuario. Incluye páginas, componentes de UI, facades y el estado de pantalla. Orquesta las acciones del usuario delegando operaciones CRUD al dominio y reflejando el resultado en la interfaz. Las validaciones de formulario (título, categoría, longitudes) viven en esta capa.
 
 **Qué puede conocer**
 
@@ -35,7 +35,7 @@ Interactuar con el usuario. Incluye páginas, componentes de UI, facades y el es
 
 **Responsabilidad**
 
-Contener la lógica de negocio del proyecto. Define entidades, comandos y casos de uso que encapsulan las reglas y operaciones del dominio. Es el núcleo sobre el que se construyen el resto de capas.
+Definir tipos, comandos y casos de uso que orquestan operaciones CRUD sobre tareas. Los casos de uso ensamblan la entidad `Task` y delegan la persistencia al repositorio; no aplican validaciones de entrada ni invariantes de negocio.
 
 **Qué puede conocer**
 
@@ -53,7 +53,7 @@ Contener la lógica de negocio del proyecto. Define entidades, comandos y casos 
 
 **Responsabilidad**
 
-Definir los contratos de acceso a datos que el dominio necesita. Actúa como puerto entre la lógica de negocio y la infraestructura: expone operaciones abstractas (obtener, crear, actualizar, eliminar) sin especificar dónde ni cómo se almacenan los datos.
+Definir los contratos de acceso a datos que el dominio necesita. Actúa como puerto entre los casos de uso y la infraestructura: expone operaciones abstractas (obtener, crear, actualizar, eliminar) sin especificar dónde ni cómo se almacenan los datos.
 
 En el proyecto, estos contratos viven dentro del dominio (por ejemplo, `TaskRepository`) y las implementaciones concretas se registran en el composition root de la feature.
 
@@ -83,15 +83,15 @@ Implementar los contratos de repositorio y gestionar el acceso real a los datos.
 **Qué NO puede conocer**
 
 - Componentes, páginas, facades ni estado de presentación.
-- Casos de uso ni reglas de negocio que no sean necesarias para cumplir el contrato del repositorio.
+- Casos de uso ni lógica de validación de formularios.
 - Cómo la UI consume o muestra los datos.
 
 ## Dirección de las dependencias
 
-Las dependencias siempre apuntan hacia el dominio porque este es el centro del sistema: contiene las reglas que dan sentido a la aplicación y no debe verse afectado por cambios en la interfaz o en la infraestructura.
+Las dependencias siempre apuntan hacia el dominio porque este define los contratos y operaciones centrales de la feature, sin depender de detalles de UI o persistencia.
 
 Si la presentación dependiera directamente de `data`, cualquier cambio en cómo se persisten los datos — pasar de memoria a una API, por ejemplo — obligaría a modificar la UI. Si `data` dependiera de la presentación, la infraestructura quedaría acoplada a detalles visuales que no le corresponden.
 
 Al invertir las dependencias mediante contratos de repositorio en el dominio, las capas externas dependen de abstracciones definidas en el núcleo. La capa `data` implementa esos contratos, pero el dominio nunca importa implementaciones concretas. El composition root de cada feature es el único lugar donde se conecta un contrato con su implementación.
 
-Este diseño permite sustituir la infraestructura, probar el dominio de forma aislada y evolucionar la interfaz sin alterar las reglas de negocio.
+Este diseño permite sustituir la infraestructura, probar los casos de uso con dobles de repositorio y evolucionar la interfaz sin modificar el contrato del dominio.

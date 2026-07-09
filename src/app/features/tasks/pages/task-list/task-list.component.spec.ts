@@ -278,4 +278,42 @@ describe('TaskListComponent', () => {
     expect(component.toastColor).toBe('danger');
     expect(component.isCreateModalOpen).toBeTrue();
   });
+
+  it('expone semántica de lista accesible cuando hay tareas', () => {
+    Object.defineProperty(taskFacadeSpy, 'filteredTasks', {
+      get: () => [editingTask],
+    });
+    fixture.detectChanges();
+
+    const list = fixture.nativeElement.querySelector('ul.task-list__list') as HTMLElement;
+    const items = fixture.nativeElement.querySelectorAll('ul.task-list__list > li');
+
+    expect(list.getAttribute('aria-label')).toBe('Lista de tareas');
+    expect(items.length).toBe(1);
+  });
+
+  it('asocia el modal con el título y la descripción del formulario', () => {
+    component.isCreateModalOpen = true;
+    fixture.detectChanges();
+
+    const modal = fixture.nativeElement.querySelector('ion-modal') as HTMLElement;
+
+    expect(modal.getAttribute('aria-labelledby')).toBe('task-form-modal-title');
+    expect(modal.getAttribute('aria-describedby')).toBe('task-form-modal-description');
+  });
+
+  it('usa role alert en toasts de error', () => {
+    const showToast = (
+      component as unknown as {
+        showToast: (message: string, color?: 'success' | 'danger') => void;
+      }
+    ).showToast.bind(component);
+
+    showToast('Error', 'danger');
+    fixture.detectChanges();
+
+    const toast = fixture.nativeElement.querySelector('ion-toast') as HTMLElement;
+
+    expect(toast.getAttribute('role')).toBe('alert');
+  });
 });

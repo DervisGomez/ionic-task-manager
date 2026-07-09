@@ -1,12 +1,13 @@
-<ion-content [fullscreen]="true">
+<ion-content class="task-list__viewport" [fullscreen]="true">
   <div class="task-list__container">
-    <div class="task-list__toolbar">
+    <header class="task-list__toolbar">
       <app-page-header
         title="Gestor de tareas"
         subtitle="Organiza tu día y enfócate en lo importante."
       ></app-page-header>
 
       <app-search-bar
+        ariaLabel="Buscar tareas"
         placeholder="Buscar tareas..."
         [value]="searchTerm"
         (valueChange)="onSearchChanged($event)"
@@ -17,7 +18,7 @@
         [selected]="selectedCategory"
         (selectedChange)="onCategorySelected($event)"
       ></app-category-filter>
-    </div>
+    </header>
 
     <main
       class="task-list__content"
@@ -34,15 +35,16 @@
         ></app-empty-state>
       </ng-container>
 
-      <ion-list *ngIf="hasTasks" aria-label="Lista de tareas">
-        <app-task-card
-          *ngFor="let task of filteredTasks"
-          [task]="task"
-          (toggleCompleted)="onToggleCompleted($event)"
-          (edit)="onEditTask($event)"
-          (delete)="onDeleteTask($event)"
-        ></app-task-card>
-      </ion-list>
+      <ul *ngIf="hasTasks" class="task-list__list" aria-label="Lista de tareas">
+        <li *ngFor="let task of filteredTasks; trackBy: trackByTaskId" class="task-list__item">
+          <app-task-card
+            [task]="task"
+            (toggleCompleted)="onToggleCompleted($event)"
+            (edit)="onEditTask($event)"
+            (delete)="onDeleteTask($event)"
+          ></app-task-card>
+        </li>
+      </ul>
     </main>
   </div>
 
@@ -57,16 +59,10 @@
     class="task-list__modal"
     [isOpen]="isCreateModalOpen"
     aria-labelledby="task-form-modal-title"
+    aria-describedby="task-form-modal-description"
     (didDismiss)="closeCreateModal()"
   >
     <ng-template>
-      <ion-header>
-        <ion-toolbar>
-          <ion-title id="task-form-modal-title">{{
-            editingTask ? 'Editar tarea' : 'Nueva tarea'
-          }}</ion-title>
-        </ion-toolbar>
-      </ion-header>
       <ion-content class="task-list__modal-content">
         <app-task-form
           [task]="editingTask ?? undefined"
@@ -83,6 +79,7 @@
     [message]="toastMessage"
     [color]="toastColor"
     [duration]="2000"
+    [attr.role]="toastColor === 'danger' ? 'alert' : 'status'"
     position="bottom"
     (didDismiss)="toastOpen = false"
   ></ion-toast>

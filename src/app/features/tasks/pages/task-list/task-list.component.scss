@@ -1,14 +1,35 @@
+ion-content.task-list__viewport {
+  &::part(scroll) {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
 .task-list__container {
-  max-width: 720px;
+  flex: 1 1 auto;
+  width: 100%;
   margin: 0 auto;
-  padding: var(--app-spacing-2xl) var(--app-spacing-md) var(--app-spacing-3xl);
-  min-height: 100%;
+  padding: var(--app-spacing-lg) var(--app-spacing-md);
   display: flex;
   flex-direction: column;
+
+  &--loading {
+    position: relative;
+    overflow: hidden;
+  }
 }
 
 .task-list__toolbar {
   flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+
+  app-page-header,
+  app-search-bar,
+  app-category-filter {
+    display: block;
+    width: 100%;
+  }
 }
 
 .task-list__content {
@@ -16,31 +37,46 @@
   flex-direction: column;
   width: 100%;
   min-width: 0;
+
+  &--empty {
+    flex: 1 1 auto;
+    justify-content: center;
+    align-items: center;
+
+    app-empty-state {
+      display: block;
+      width: 100%;
+      max-width: var(--app-size-empty-container-max);
+    }
+  }
+
+  &--list {
+    flex: 0 1 auto;
+    justify-content: flex-start;
+  }
 }
 
-.task-list__content--empty {
-  flex: 1 1 auto;
-  justify-content: center;
-  align-items: center;
-}
-
-.task-list__content--list {
-  flex: 0 1 auto;
-  justify-content: flex-start;
-  align-items: stretch;
-}
-
-.task-list__content ion-list {
-  align-self: stretch;
+.task-list__list {
   width: 100%;
+  margin: 0;
   padding: 0;
-  background: transparent;
+  list-style: none;
 
-  app-task-card {
-    display: block;
+  .task-list__item {
+    app-task-card {
+      display: block;
+      animation: app-enter-rise var(--app-duration-medium) var(--app-easing-enter) both;
+      animation-delay: var(--app-enter-delay, 0ms);
+    }
+
+    @for $i from 1 through 8 {
+      &:nth-child(#{$i}) app-task-card {
+        --app-enter-delay: calc(var(--app-duration-fast) * #{($i - 1) * 0.3});
+      }
+    }
 
     &:not(:last-child) {
-      margin-bottom: var(--app-spacing-md);
+      margin-bottom: var(--app-spacing-lg);
     }
   }
 }
@@ -48,17 +84,78 @@
 .task-list__modal {
   --border-radius: var(--app-radius-xl);
   --box-shadow: var(--app-shadow-lg);
+  --background: var(--app-color-surface);
+  --ion-background-color: var(--app-color-surface);
+
+  &::part(content) {
+    border-radius: var(--app-radius-xl);
+    overflow: hidden;
+    background: var(--app-color-surface);
+    animation: app-modal-enter var(--app-duration-medium) var(--app-easing-enter) both;
+  }
+
+  &::part(backdrop) {
+    background: color-mix(in srgb, var(--app-color-text-primary) 28%, transparent);
+    animation: app-fade-in var(--app-duration-medium) var(--app-easing-enter) both;
+  }
 }
 
-.task-list__modal-content {
+ion-content.task-list__modal-content {
+  --background: var(--app-color-surface);
   width: 100%;
-  --padding-start: var(--app-spacing-xl);
-  --padding-end: var(--app-spacing-xl);
-  --padding-top: var(--app-spacing-xl);
-  --padding-bottom: var(--app-spacing-xl);
+  --padding-start: var(--app-spacing-lg);
+  --padding-end: var(--app-spacing-lg);
+  --padding-top: var(--app-spacing-lg);
+  --padding-bottom: var(--app-spacing-lg);
+
+  &::part(background) {
+    background: var(--app-color-surface);
+  }
+
+  &::part(scroll) {
+    overscroll-behavior: contain;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
 }
 
-.task-list__modal ion-toolbar {
-  --padding-start: var(--app-spacing-md);
-  --padding-end: var(--app-spacing-md);
+@media (min-width: 768px) {
+  .task-list__container {
+    max-width: calc(var(--app-spacing-3xl) * 15);
+    padding: var(--app-spacing-xl) var(--app-spacing-xl);
+  }
+
+  .task-list__toolbar app-page-header {
+    max-width: calc(var(--app-spacing-3xl) * 12);
+  }
+
+  .task-list__modal {
+    --width: min(100%, calc(var(--app-spacing-3xl) * 13));
+  }
+
+  ion-content.task-list__modal-content {
+    --padding-start: var(--app-spacing-2xl);
+    --padding-end: var(--app-spacing-2xl);
+    --padding-top: var(--app-spacing-2xl);
+    --padding-bottom: var(--app-spacing-2xl);
+  }
+}
+
+@media (min-width: 1024px) {
+  .task-list__container {
+    max-width: calc(var(--app-spacing-2xl) * 20);
+    padding: var(--app-spacing-2xl) var(--app-spacing-xl);
+  }
+
+  .task-list__toolbar {
+    app-page-header,
+    app-search-bar {
+      max-width: calc(var(--app-spacing-3xl) * 11);
+    }
+  }
+
+  .task-list__modal {
+    --width: min(100%, calc(var(--app-spacing-3xl) * 15));
+  }
 }

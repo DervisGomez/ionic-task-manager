@@ -1,0 +1,8 @@
+// Shadow / elevation levels
+:root {
+  --app-shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
+  --app-shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08);
+  --app-shadow-lg: 0 12px 24px rgba(15, 23, 42, 0.12);
+  --app-shadow-focus: 0 0 0 3px color-mix(in srgb, var(--ion-color-primary) 12%, transparent);
+  --app-shadow-focus-danger: 0 0 0 3px color-mix(in srgb, var(--ion-color-danger) 12%, transparent);
+}

@@ -10,6 +10,7 @@ Este enfoque mejora la cohesión, facilita el mantenimiento y permite entender u
 src/app/
 ├── app.module.ts
 ├── app-routing.module.ts
+├── core/
 ├── features/
 │   └── tasks/
 │       ├── data/
@@ -31,6 +32,9 @@ src/app/
 │       │   ├── mappers/
 │       │   ├── models/
 │       │   └── state/
+│       ├── shared/
+│       │   └── catalogs/
+│       │       └── task-categories.catalog.ts
 │       ├── tasks-routing-module.ts
 │       ├── tasks.providers.ts
 │       └── tasks.module.ts
@@ -45,7 +49,14 @@ src/app/
     └── shared.module.ts
 
 src/theme/
-└── variables.scss
+├── variables.scss
+├── _colors.scss
+├── _spacing.scss
+├── _radius.scss
+├── _elevation.scss
+├── _typography.scss
+├── _motion-tokens.scss
+└── motion.scss
 ```
 
 ## Carpetas principales
@@ -67,7 +78,7 @@ No debería ir en `core/`:
 - lógica de una feature específica
 - modelos o utilidades exclusivas de una sola funcionalidad
 
-En el estado actual del proyecto, esta carpeta **no está presente**. La documentación la incluye como referencia arquitectónica para indicar cuándo tendría sentido incorporarla.
+En el estado actual del proyecto, `core/` existe como carpeta reservada para futuros servicios globales (guards, interceptores, servicios singleton). Aún no contiene implementaciones activas.
 
 ### `shared/`
 
@@ -75,17 +86,17 @@ En el estado actual del proyecto, esta carpeta **no está presente**. La documen
 
 Componentes actuales:
 
-| Componente                      | Responsabilidad                           |
-| ------------------------------- | ----------------------------------------- |
-| `PageHeaderComponent`           | Cabecera de página con título y subtítulo |
-| `SearchBarComponent`            | Campo de búsqueda con debounce            |
-| `CategoryFilterComponent`       | Filtro por categoría con patrón tablist   |
-| `EmptyStateComponent`           | Estado vacío con icono, texto y CTA       |
-| `FloatingActionButtonComponent` | Botón flotante de acción principal        |
+| Componente                      | Responsabilidad                              |
+| ------------------------------- | -------------------------------------------- |
+| `PageHeaderComponent`           | Cabecera de página con título y subtítulo    |
+| `SearchBarComponent`            | Campo de búsqueda con debounce               |
+| `CategoryFilterComponent`       | Filtro por categoría con patrón `radiogroup` |
+| `EmptyStateComponent`           | Estado vacío con icono, texto y CTA          |
+| `FloatingActionButtonComponent` | Botón flotante de acción principal           |
 
 No debería ir en `shared/`:
 
-- lógica de negocio del dominio
+- casos de uso
 - casos de uso
 - repositorios
 - componentes o estados acoplados a una feature específica
@@ -100,14 +111,14 @@ En el proyecto actual, `tasks/` es la feature implementada y contiene todos los 
 
 ### `domain/`
 
-`domain/` contiene el núcleo de negocio de la feature.
+`domain/` define tipos, comandos, contratos y casos de uso de la feature.
 
 Contenido actual:
 
-- **Entidades**: `Task`, `Category`
+- **Entidades**: `Task`, `Category` (interfaces TypeScript; sin lógica de validación en dominio)
 - **Comandos**: `CreateTaskCommand`, `UpdateTaskCommand`
 - **Contratos**: `TaskRepository`
-- **Casos de uso**: `GetTasksUseCase`, `CreateTaskUseCase`, `UpdateTaskUseCase`, `DeleteTaskUseCase`
+- **Casos de uso**: `GetTasksUseCase`, `CreateTaskUseCase`, `UpdateTaskUseCase`, `DeleteTaskUseCase` (orquestan CRUD y delegan en el repositorio)
 
 No debe ir:
 
@@ -130,14 +141,14 @@ Contenido actual:
 
 Contenido actual:
 
-| Carpeta / archivo          | Responsabilidad                                       |
-| -------------------------- | ----------------------------------------------------- |
-| `components/task-form/`    | Formulario reactivo de creación/edición               |
-| `components/task-card/`    | Tarjeta de tarea con acciones                         |
-| `facades/task.facade.ts`   | Orquestación de casos de uso y estado de pantalla     |
-| `mappers/task.mapper.ts`   | Adaptación de entidades del dominio a `TaskViewModel` |
-| `models/task.viewmodel.ts` | Modelo de datos orientado a la UI                     |
-| `state/task.state.ts`      | Interfaz del estado interno del facade                |
+| Carpeta / archivo          | Responsabilidad                                                                          |
+| -------------------------- | ---------------------------------------------------------------------------------------- |
+| `components/task-form/`    | Formulario reactivo de creación/edición                                                  |
+| `components/task-card/`    | Tarjeta de tarea con acciones                                                            |
+| `facades/task.facade.ts`   | Orquestación de casos de uso y estado de pantalla                                        |
+| `mappers/task.mapper.ts`   | Adaptación de entidades del dominio a `TaskViewModel`; resuelve labels desde el catálogo |
+| `models/task.viewmodel.ts` | Modelo de datos orientado a la UI                                                        |
+| `state/task.state.ts`      | Interfaz del estado interno del facade                                                   |
 
 ### `pages/`
 
@@ -146,6 +157,14 @@ Contenido actual:
 Contenido actual:
 
 - `task-list/` — pantalla principal con listado, búsqueda, filtros, modal y toast
+
+### `shared/` (dentro de la feature)
+
+Catálogos y utilidades compartidas solo por el módulo `tasks`, sin depender de la capa global `app/shared/`.
+
+Contenido actual:
+
+- `catalogs/task-categories.catalog.ts` — ids, labels y opciones de filtro para Trabajo, Personal y Compras (esta última solo para mostrar label en tareas existentes, no seleccionable en formulario)
 
 ## Por qué la arquitectura está organizada por feature
 

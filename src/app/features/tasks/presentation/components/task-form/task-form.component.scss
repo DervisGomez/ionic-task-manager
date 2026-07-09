@@ -1,10 +1,53 @@
-$touch-target: calc(var(--app-spacing-3xl) - var(--app-spacing-xs));
-
 .task-form {
+  --task-form-field-transition:
+    border-color var(--app-transition-interactive), box-shadow var(--app-transition-interactive);
+  --task-form-chip-transition:
+    background-color, border-color, box-shadow, color, transform var(--app-transition-interactive);
   width: 100%;
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--app-spacing-2xl);
+  background: var(--app-color-surface);
+}
+
+.task-form__header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--app-spacing-sm);
+  padding-bottom: var(--app-spacing-lg);
+  border-bottom: 1px solid var(--app-color-border);
+}
+
+.task-form__title,
+.task-form__subtitle,
+.task-form__helper,
+.task-form__error {
+  margin: 0;
+}
+
+.task-form__title {
+  font-size: var(--app-text-title-section);
+  font-weight: var(--app-font-weight-semibold);
+  line-height: var(--app-line-height-tight);
+  color: var(--app-color-text-primary);
+}
+
+.task-form__subtitle {
+  font-size: var(--app-text-body-sm);
+  line-height: var(--app-line-height-relaxed);
+  color: var(--app-color-text-secondary);
+}
+
+.task-form__body {
   display: flex;
   flex-direction: column;
   gap: var(--app-spacing-xl);
+}
+
+.task-form__section,
+.task-form__field {
+  min-width: 0;
 }
 
 .task-form__field {
@@ -14,18 +57,28 @@ $touch-target: calc(var(--app-spacing-3xl) - var(--app-spacing-xs));
   margin: 0;
   padding: 0;
   border: 0;
-  min-width: 0;
-}
-
-.task-form__field--category {
-  gap: var(--app-spacing-sm);
 }
 
 .task-form__label {
-  font-size: var(--app-font-size-sm);
+  font-size: var(--app-text-label);
   font-weight: var(--app-font-weight-semibold);
   line-height: var(--app-line-height-tight);
   color: var(--app-color-text-primary);
+}
+
+.task-form__helper,
+.task-form__error {
+  font-size: var(--app-text-caption);
+  line-height: var(--app-line-height-normal);
+}
+
+.task-form__helper {
+  color: var(--app-color-text-secondary);
+}
+
+.task-form__error {
+  font-weight: var(--app-font-weight-medium);
+  color: var(--app-color-text-error);
 }
 
 .task-form__input,
@@ -33,71 +86,80 @@ $touch-target: calc(var(--app-spacing-3xl) - var(--app-spacing-xs));
   width: 100%;
   --background: var(--app-color-surface);
   --color: var(--app-color-text-primary);
-  --placeholder-color: color-mix(
-    in srgb,
-    var(--app-color-text-secondary) 55%,
-    var(--app-color-text-primary)
-  );
+  --highlight-color-focused: transparent;
+  --highlight-color-valid: transparent;
+  --highlight-color-invalid: transparent;
+  --highlight-height: 0;
+  --placeholder-color: var(--app-color-text-placeholder);
   --placeholder-opacity: 1;
   --padding-start: var(--app-spacing-md);
   --padding-end: var(--app-spacing-md);
   --border-radius: var(--app-radius-lg);
   border: 1px solid var(--app-color-border);
   border-radius: var(--app-radius-lg);
-  transition:
-    border-color var(--app-transition-fast),
-    box-shadow var(--app-transition-fast);
+  transition: var(--task-form-field-transition);
 
   &:focus-within {
-    border-color: color-mix(in srgb, var(--ion-color-primary) 35%, var(--app-color-border));
-    box-shadow: var(--app-shadow-sm);
+    border-color: color-mix(in srgb, var(--ion-color-primary) 40%, var(--app-color-border));
+    box-shadow: var(--app-shadow-focus);
   }
 }
 
 .task-form__input {
-  min-height: calc(var(--app-spacing-xl) + var(--app-spacing-sm));
+  min-height: var(--app-size-input-min-height);
+}
+
+.task-form__input--title {
+  font-size: var(--app-text-body);
+  font-weight: var(--app-font-weight-medium);
+
+  @media (min-width: 768px) {
+    font-size: var(--app-text-title-section);
+  }
 }
 
 .task-form__textarea {
   min-height: calc(var(--app-spacing-3xl) * 2);
   --padding-top: var(--app-spacing-md);
   --padding-bottom: var(--app-spacing-md);
+  resize: none;
 }
 
 .task-form__category-options {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--app-spacing-sm);
+  gap: var(--app-spacing-xs);
+  padding: var(--app-spacing-xs);
+  border: 1px solid var(--app-color-border);
+  border-radius: var(--app-radius-lg);
+  background: color-mix(in srgb, var(--ion-background-color) 72%, var(--app-color-surface));
 }
 
 .task-form__category-chip {
+  flex: 1 1 calc(50% - var(--app-spacing-xs));
   margin: 0;
-  min-height: $touch-target;
-  --padding-start: var(--app-spacing-xl);
-  --padding-end: var(--app-spacing-xl);
-  --background: var(--app-color-surface);
-  border: 1px solid var(--app-color-border);
-  border-radius: $touch-target;
-  font-size: var(--app-font-size-sm);
+  min-height: var(--app-size-touch-target);
+  padding: var(--app-spacing-sm) var(--app-spacing-lg);
+  border: 1px solid transparent;
+  border-radius: var(--app-radius-md);
+  background: transparent;
+  font-family: inherit;
+  font-size: var(--app-text-chip);
   font-weight: var(--app-font-weight-medium);
   line-height: var(--app-line-height-tight);
   color: var(--app-color-text-secondary);
-  transition:
-    background-color var(--app-transition-fast),
-    border-color var(--app-transition-fast),
-    box-shadow var(--app-transition-fast),
-    color var(--app-transition-fast),
-    transform var(--app-transition-fast);
+  text-align: center;
   cursor: pointer;
+  transition: var(--task-form-chip-transition);
 
   &:active {
-    transform: scale(0.96);
+    transform: scale(0.98);
   }
 
   &--selected {
-    --background: var(--ion-color-primary);
-    --color: var(--ion-color-primary-contrast);
-    border-color: var(--ion-color-primary);
+    border-color: color-mix(in srgb, var(--ion-color-primary) 28%, var(--app-color-border));
+    background: var(--app-color-surface);
+    color: var(--ion-color-primary);
     font-weight: var(--app-font-weight-semibold);
     box-shadow: var(--app-shadow-sm);
   }
@@ -105,16 +167,83 @@ $touch-target: calc(var(--app-spacing-3xl) - var(--app-spacing-xs));
 
 .task-form__actions {
   display: flex;
-  flex-direction: row;
   justify-content: flex-end;
-  align-self: flex-end;
+  align-items: center;
   gap: var(--app-spacing-md);
-  width: auto;
-  padding-top: var(--app-spacing-md);
+  padding-top: var(--app-spacing-lg);
+  border-top: 1px solid var(--app-color-border);
+
+  ion-button {
+    flex: 0 0 auto;
+    margin: 0;
+    min-height: var(--app-size-touch-target);
+    min-width: calc(var(--app-spacing-3xl) * 2);
+    font-size: var(--app-text-label);
+    font-weight: var(--app-font-weight-semibold);
+  }
 }
 
-.task-form__actions ion-button {
-  flex: 0 0 auto;
-  margin: 0;
-  min-width: calc(var(--app-spacing-3xl) * 2);
+.task-form__submit {
+  --box-shadow: var(--app-shadow-sm);
+  transition: box-shadow var(--app-transition-interactive);
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      --box-shadow: var(--app-shadow-md);
+    }
+  }
+}
+
+.task-form__field--invalid {
+  --task-form-invalid-border: color-mix(
+    in srgb,
+    var(--ion-color-danger) 55%,
+    var(--app-color-border)
+  );
+
+  .task-form__input,
+  .task-form__textarea {
+    border-color: var(--task-form-invalid-border);
+
+    &:focus-within {
+      border-color: var(--ion-color-danger);
+      box-shadow: var(--app-shadow-focus-danger);
+    }
+  }
+
+  .task-form__category-options {
+    border-color: var(--task-form-invalid-border);
+  }
+}
+
+@media (min-width: 768px) {
+  .task-form {
+    max-width: calc(var(--app-spacing-3xl) * 12);
+  }
+
+  .task-form__header {
+    padding-bottom: var(--app-spacing-xl);
+  }
+
+  .task-form__title {
+    font-size: var(--app-text-title-page);
+  }
+
+  .task-form__body {
+    gap: var(--app-spacing-2xl);
+  }
+
+  .task-form__category-options {
+    gap: var(--app-spacing-md);
+  }
+
+  .task-form__actions ion-button {
+    min-width: calc(var(--app-spacing-3xl) * 2.5);
+  }
+}
+
+@media (min-width: 1024px) {
+  .task-form {
+    max-width: calc(var(--app-spacing-3xl) * 14);
+  }
 }

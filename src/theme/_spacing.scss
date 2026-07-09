@@ -1,0 +1,18 @@
+// Spacing scale & derived layout sizes
+:root {
+  --app-spacing-xs: 4px;
+  --app-spacing-sm: 8px;
+  --app-spacing-md: 16px;
+  --app-spacing-lg: 24px;
+  --app-spacing-xl: 32px;
+  --app-spacing-2xl: 40px;
+  --app-spacing-3xl: 48px;
+
+  --app-size-touch-target: calc(var(--app-spacing-3xl) - var(--app-spacing-xs));
+  --app-size-input-min-height: calc(var(--app-spacing-xl) + var(--app-spacing-sm));
+  --app-size-checkbox: calc(var(--app-spacing-lg) + var(--app-spacing-sm));
+  --app-size-pill-height: calc(var(--app-spacing-lg) + var(--app-spacing-xs));
+  --app-size-empty-icon: calc(var(--app-spacing-3xl) * 2);
+  --app-size-empty-text-max: calc(var(--app-spacing-3xl) * 4.25);
+  --app-size-empty-container-max: calc(var(--app-spacing-3xl) * 5.5);
+}

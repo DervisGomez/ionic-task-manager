@@ -42,7 +42,7 @@ export class CategoryFilterComponent {
     }
 
     this.selectedChange.emit(id);
-    this.focusTab(id);
+    this.focusOption(id);
   }
 
   onKeydown(event: KeyboardEvent, optionId: string): void {
@@ -84,14 +84,14 @@ export class CategoryFilterComponent {
     }
 
     const nextId = optionIds[nextIndex];
-    this.focusTab(nextId);
+    this.focusOption(nextId);
 
     if (nextId !== this.selected) {
       this.selectedChange.emit(nextId);
     }
   }
 
-  private focusTab(id: string): void {
-    document.getElementById(`category-tab-${id}`)?.focus();
+  private focusOption(id: string): void {
+    document.getElementById(`category-option-${id}`)?.focus();
   }
 }

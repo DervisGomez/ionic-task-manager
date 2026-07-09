@@ -1,64 +1,135 @@
-<form
-  [formGroup]="form"
-  (ngSubmit)="onSubmit()"
-  class="task-form"
-  aria-label="Formulario de tarea"
-  novalidate
->
-  <div class="task-form__field">
-    <label class="task-form__label" for="task-title-input">Título</label>
-    <ion-input
-      id="task-title-input"
-      class="task-form__input"
-      formControlName="title"
-      placeholder="Ej. Planificar sprint"
-      [errorText]="getFieldError('title')"
-      [attr.aria-invalid]="getFieldError('title') ? true : null"
-      autocomplete="off"
-    ></ion-input>
-  </div>
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="task-form" novalidate>
+  <header class="task-form__header">
+    <h2 class="task-form__title" id="task-form-modal-title">{{ headerTitle }}</h2>
+    <p class="task-form__subtitle" id="task-form-modal-description">{{ headerDescription }}</p>
+  </header>
 
-  <div class="task-form__field">
-    <label class="task-form__label" for="task-description-input">Descripción</label>
-    <ion-textarea
-      id="task-description-input"
-      class="task-form__textarea"
-      formControlName="description"
-      placeholder="Ej. Definir alcance y prioridades"
-      rows="4"
-      [autoGrow]="true"
-      [errorText]="getFieldError('description')"
-      [attr.aria-invalid]="getFieldError('description') ? true : null"
-    ></ion-textarea>
-  </div>
+  <div class="task-form__body">
+    <section class="task-form__section" aria-labelledby="task-form-title-label">
+      <div class="task-form__field" [class.task-form__field--invalid]="!!getFieldError('title')">
+        <label class="task-form__label" id="task-form-title-label" for="task-title-input">
+          Título
+          <span class="visually-hidden">(obligatorio)</span>
+        </label>
+        <ion-input
+          id="task-title-input"
+          class="task-form__input task-form__input--title"
+          formControlName="title"
+          placeholder="Ej. Planificar sprint"
+          [attr.aria-required]="true"
+          [attr.aria-invalid]="getFieldError('title') ? true : null"
+          [attr.aria-describedby]="getFieldError('title') ? 'task-title-error' : null"
+          autocomplete="off"
+        ></ion-input>
+        <p
+          class="task-form__error"
+          id="task-title-error"
+          *ngIf="getFieldError('title')"
+          role="alert"
+        >
+          {{ getFieldError('title') }}
+        </p>
+      </div>
+    </section>
 
-  <fieldset class="task-form__field task-form__field--category">
-    <legend class="task-form__label">Categoría</legend>
-    <input type="hidden" formControlName="categoryId" aria-hidden="true" tabindex="-1" />
-    <div class="task-form__category-options" role="radiogroup" aria-label="Categoría">
-      <ion-chip
-        class="task-form__category-chip"
-        [class.task-form__category-chip--selected]="form.controls.categoryId.value === 'work'"
-        role="radio"
-        [attr.aria-checked]="form.controls.categoryId.value === 'work'"
-        (click)="form.controls.categoryId.setValue('work')"
+    <section class="task-form__section" aria-labelledby="task-form-description-label">
+      <div
+        class="task-form__field"
+        [class.task-form__field--invalid]="!!getFieldError('description')"
       >
-        Trabajo
-      </ion-chip>
-      <ion-chip
-        class="task-form__category-chip"
-        [class.task-form__category-chip--selected]="form.controls.categoryId.value === 'personal'"
-        role="radio"
-        [attr.aria-checked]="form.controls.categoryId.value === 'personal'"
-        (click)="form.controls.categoryId.setValue('personal')"
-      >
-        Personal
-      </ion-chip>
-    </div>
-  </fieldset>
+        <label
+          class="task-form__label"
+          id="task-form-description-label"
+          for="task-description-input"
+        >
+          Descripción
+        </label>
+        <ion-textarea
+          id="task-description-input"
+          class="task-form__textarea"
+          formControlName="description"
+          placeholder="Ej. Definir alcance y prioridades"
+          rows="4"
+          [autoGrow]="true"
+          [attr.aria-invalid]="getFieldError('description') ? true : null"
+          [attr.aria-describedby]="descriptionDescribedBy"
+        ></ion-textarea>
+        <p
+          class="task-form__error"
+          id="task-description-error"
+          *ngIf="getFieldError('description')"
+          role="alert"
+        >
+          {{ getFieldError('description') }}
+        </p>
+        <p
+          class="task-form__helper"
+          id="task-description-helper"
+          *ngIf="!getFieldError('description')"
+        >
+          Opcional. Añade contexto para recordar los detalles.
+        </p>
+      </div>
+    </section>
 
-  <div class="task-form__actions">
-    <ion-button type="button" fill="outline" (click)="onCancel()">Cancelar</ion-button>
-    <ion-button type="submit">{{ submitButtonText }}</ion-button>
+    <section class="task-form__section" aria-labelledby="task-form-category-label">
+      <fieldset
+        class="task-form__field task-form__field--category"
+        [class.task-form__field--invalid]="!!getFieldError('categoryId')"
+      >
+        <legend class="task-form__label" id="task-form-category-label">
+          Categoría
+          <span class="visually-hidden">(obligatorio)</span>
+        </legend>
+        <p
+          class="task-form__helper"
+          id="task-form-category-helper"
+          *ngIf="!getFieldError('categoryId')"
+        >
+          Selecciona dónde encaja mejor esta tarea.
+        </p>
+        <input type="hidden" formControlName="categoryId" aria-hidden="true" tabindex="-1" />
+        <div
+          class="task-form__category-options"
+          role="radiogroup"
+          aria-labelledby="task-form-category-label"
+          [attr.aria-required]="true"
+          [attr.aria-invalid]="getFieldError('categoryId') ? true : null"
+          [attr.aria-describedby]="categoryDescribedBy"
+        >
+          <button
+            *ngFor="let category of categoryOptions"
+            type="button"
+            class="task-form__category-chip"
+            [id]="getCategoryChipId(category.id)"
+            [class.task-form__category-chip--selected]="
+              form.controls.categoryId.value === category.id
+            "
+            role="radio"
+            [attr.aria-checked]="form.controls.categoryId.value === category.id ? 'true' : 'false'"
+            [attr.tabindex]="form.controls.categoryId.value === category.id ? 0 : -1"
+            (click)="selectCategory(category.id)"
+            (keydown)="onCategoryKeydown($event, category.id)"
+          >
+            {{ category.label }}
+          </button>
+        </div>
+        <p
+          class="task-form__error"
+          id="task-category-error"
+          *ngIf="getFieldError('categoryId')"
+          role="alert"
+        >
+          {{ getFieldError('categoryId') }}
+        </p>
+      </fieldset>
+    </section>
   </div>
+
+  <footer class="task-form__actions">
+    <ion-button type="button" fill="outline" color="medium" (click)="onCancel()">
+      Cancelar
+    </ion-button>
+    <ion-button type="submit" class="task-form__submit">{{ submitButtonText }}</ion-button>
+  </footer>
 </form>

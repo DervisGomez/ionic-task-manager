@@ -57,20 +57,27 @@ describe('CategoryFilterComponent', () => {
     expect(emitSpy).not.toHaveBeenCalled();
   });
 
-  it('should mark the selected tab with aria-selected', () => {
-    const selectedTab = fixture.nativeElement.querySelector(
-      'ion-chip[aria-selected="true"]',
+  it('should mark the selected option with aria-checked', () => {
+    const selectedOption = fixture.nativeElement.querySelector(
+      'ion-chip[aria-checked="true"]',
     ) as HTMLElement;
 
-    expect(selectedTab?.textContent?.trim()).toBe('Todas');
+    expect(selectedOption?.textContent?.trim()).toBe('Todas');
   });
 
-  it('should expose tabindex 0 only on the selected tab', () => {
-    const tabs = fixture.nativeElement.querySelectorAll('ion-chip[role="tab"]');
+  it('should expose tabindex 0 only on the selected option', () => {
+    const options = fixture.nativeElement.querySelectorAll('ion-chip[role="radio"]');
 
-    expect(tabs[0].getAttribute('tabindex')).toBe('0');
-    expect(tabs[1].getAttribute('tabindex')).toBe('-1');
-    expect(tabs[2].getAttribute('tabindex')).toBe('-1');
+    expect(options[0].getAttribute('tabindex')).toBe('0');
+    expect(options[1].getAttribute('tabindex')).toBe('-1');
+    expect(options[2].getAttribute('tabindex')).toBe('-1');
+  });
+
+  it('should expose radiogroup semantics', () => {
+    const group = fixture.nativeElement.querySelector('nav[role="radiogroup"]') as HTMLElement;
+
+    expect(group).toBeTruthy();
+    expect(group.getAttribute('aria-label')).toBe('Filtros por categoría');
   });
 
   it('should navigate with keyboard arrows', () => {

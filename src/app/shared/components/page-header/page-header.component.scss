@@ -4,7 +4,7 @@
   .title {
     margin: 0;
     color: var(--app-color-text-primary);
-    font-size: var(--app-font-size-xl);
+    font-size: var(--app-text-title-page);
     font-weight: var(--app-font-weight-bold);
     line-height: var(--app-line-height-tight);
   }
@@ -12,7 +12,7 @@
   .subtitle {
     margin-top: var(--app-spacing-sm);
     color: var(--app-color-text-secondary);
-    font-size: var(--app-font-size-sm);
+    font-size: var(--app-text-body-sm);
     font-weight: var(--app-font-weight-regular);
     line-height: var(--app-line-height-normal);
   }

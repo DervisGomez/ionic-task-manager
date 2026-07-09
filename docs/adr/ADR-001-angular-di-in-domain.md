@@ -99,4 +99,4 @@ En un proyecto empresarial con múltiples bounded contexts o una Arquitectura He
 
 ## Revisión futura
 
-Cuando el proyecto evolucione hacia una arquitectura completamente agnóstica del framework, los casos de uso podrán eliminar la dependencia de Angular y ser instanciados desde un Composition Root externo sin modificar la lógica de negocio.
+Cuando el proyecto evolucione hacia una arquitectura completamente agnóstica del framework, los casos de uso podrán eliminar la dependencia de Angular y ser instanciados desde un Composition Root externo sin modificar su comportamiento.

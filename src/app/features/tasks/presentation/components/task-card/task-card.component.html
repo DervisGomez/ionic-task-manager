@@ -1,4 +1,9 @@
-<ion-card class="task-card" role="article" [attr.aria-labelledby]="'task-title-' + task.id">
+<ion-card
+  class="task-card"
+  [class.task-card--completed]="task.completed"
+  [class.task-card--category-personal]="task.categoryId === 'personal'"
+  [attr.aria-labelledby]="'task-title-' + task.id"
+>
   <ion-card-content class="task-card__content">
     <div class="task-card__header">
       <ion-checkbox
@@ -8,31 +13,63 @@
         (ionChange)="onToggleCompleted()"
       ></ion-checkbox>
 
-      <h3 class="task-card__title" [id]="'task-title-' + task.id">{{ task.title }}</h3>
+      <div class="task-card__main">
+        <div class="task-card__title-row">
+          <h3 class="task-card__title" [id]="'task-title-' + task.id">{{ task.title }}</h3>
 
-      <div class="task-card__actions">
-        <ion-button fill="clear" size="small" [attr.aria-label]="editAriaLabel" (click)="onEdit()">
-          <ion-icon name="create-outline" aria-hidden="true"></ion-icon>
-        </ion-button>
-        <ion-button
-          fill="clear"
-          size="small"
-          color="danger"
-          [attr.aria-label]="deleteAriaLabel"
-          (click)="onDelete()"
-        >
-          <ion-icon name="trash-outline" aria-hidden="true"></ion-icon>
-        </ion-button>
+          <div class="task-card__actions">
+            <ion-button
+              fill="clear"
+              size="small"
+              shape="round"
+              [attr.aria-label]="editAriaLabel"
+              (click)="onEdit()"
+            >
+              <ion-icon name="create-outline" aria-hidden="true"></ion-icon>
+            </ion-button>
+            <ion-button
+              fill="clear"
+              size="small"
+              shape="round"
+              color="danger"
+              [attr.aria-label]="deleteAriaLabel"
+              (click)="onDelete()"
+            >
+              <ion-icon name="trash-outline" aria-hidden="true"></ion-icon>
+            </ion-button>
+          </div>
+        </div>
+
+        <div class="task-card__description-block" *ngIf="task.description">
+          <p
+            class="task-card__description"
+            [class.task-card__description--expanded]="isDescriptionExpanded"
+            [id]="'task-description-' + task.id"
+          >
+            {{ task.description }}
+          </p>
+          <button
+            *ngIf="canExpandDescription"
+            type="button"
+            class="task-card__toggle"
+            [attr.aria-expanded]="isDescriptionExpanded"
+            [attr.aria-controls]="'task-description-' + task.id"
+            [attr.aria-label]="descriptionToggleAriaLabel"
+            (click)="toggleDescription($event)"
+          >
+            {{ descriptionToggleLabel }}
+          </button>
+        </div>
+
+        <div class="task-card__meta" [class.task-card__meta--status-only]="!hasCategory">
+          <span *ngIf="hasCategory" class="task-card__category">
+            {{ task.categoryLabel }}
+          </span>
+          <ion-badge class="task-card__status" [color]="task.statusColor">{{
+            task.statusLabel
+          }}</ion-badge>
+        </div>
       </div>
-    </div>
-
-    <p class="task-card__description" *ngIf="task.description">{{ task.description }}</p>
-
-    <div class="task-card__meta" role="group" aria-label="Categoría y estado">
-      <ion-chip class="task-card__category">{{ task.categoryLabel }}</ion-chip>
-      <ion-badge class="task-card__status" [color]="task.statusColor">{{
-        task.statusLabel
-      }}</ion-badge>
     </div>
   </ion-card-content>
 </ion-card>

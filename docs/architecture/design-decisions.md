@@ -1,30 +1,30 @@
-# Decisiones de diseño (hasta Sprint 5)
+# Decisiones de diseño (hasta Sprint 6)
 
-Este documento resume las decisiones arquitectónicas principales adoptadas en el proyecto hasta el Sprint 5. Cada decisión incluye su contexto, la elección realizada y el beneficio obtenido en el estado actual del producto.
+Este documento resume las decisiones arquitectónicas principales adoptadas en el proyecto hasta el Sprint 6. Cada decisión incluye su contexto, la elección realizada y el beneficio obtenido en el estado actual del producto.
 
 ## ¿Por qué usamos Clean Architecture?
 
 ### Contexto
 
-El proyecto necesita separar reglas de negocio, UI y acceso a datos para evitar acoplamientos directos entre componentes de pantalla y detalles de infraestructura.
+El proyecto necesita separar dominio, UI y acceso a datos para evitar acoplamientos directos entre componentes de pantalla y detalles de infraestructura.
 
 ### Decisión
 
-Organizar cada feature en capas con responsabilidades claras: presentación, dominio y datos, utilizando contratos para aislar la lógica de negocio de las implementaciones concretas.
+Organizar cada feature en capas con responsabilidades claras: presentación, dominio y datos, utilizando contratos para aislar los casos de uso de las implementaciones concretas.
 
 ### Beneficio
 
-Permite evolucionar la interfaz o la infraestructura sin reescribir el núcleo de negocio, facilita pruebas unitarias y reduce el impacto de cambios estructurales.
+Permite evolucionar la interfaz o la infraestructura sin reescribir los casos de uso, facilita pruebas unitarias y reduce el impacto de cambios estructurales.
 
-## ¿Por qué usamos DDD?
+## ¿Por qué usamos lenguaje de dominio (DDD ligero)?
 
 ### Contexto
 
-La funcionalidad de tareas requiere un lenguaje de negocio explícito para modelar conceptos como tarea, categoría y operaciones del dominio de forma consistente en todo el módulo.
+La funcionalidad de tareas requiere un vocabulario explícito para modelar conceptos como tarea, categoría y operaciones de forma consistente en todo el módulo.
 
 ### Decisión
 
-Representar el negocio mediante entidades, comandos y casos de uso dentro de la feature, manteniendo el foco en el modelo del dominio y sus operaciones.
+Representar el dominio mediante interfaces TypeScript (`Task`, `Category`), comandos y casos de uso dentro de la feature. Las etiquetas de categoría para la UI provienen del catálogo en `features/tasks/shared/catalogs/`, no del dominio.
 
 ### Beneficio
 
@@ -42,21 +42,21 @@ Definir contratos de repositorio en el dominio y resolver su implementación con
 
 ### Beneficio
 
-Desacopla la lógica de negocio de la persistencia, facilita el reemplazo de implementación y simplifica las pruebas del dominio con dobles de repositorio.
+Desacopla los casos de uso de la persistencia, facilita el reemplazo de implementación y simplifica las pruebas del dominio con dobles de repositorio.
 
 ## ¿Por qué usamos Use Cases?
 
 ### Contexto
 
-Las acciones del usuario (crear, consultar, actualizar y eliminar tareas) requieren una capa que concentre reglas de negocio y evite distribuirlas entre componentes de UI.
+Las acciones del usuario (crear, consultar, actualizar y eliminar tareas) requieren una capa que concentre la orquestación CRUD y evite distribuirla entre componentes de UI.
 
 ### Decisión
 
-Modelar cada operación principal como un caso de uso del dominio con una única responsabilidad y una interfaz de ejecución explícita.
+Modelar cada operación principal como un caso de uso del dominio con una única responsabilidad y una interfaz de ejecución explícita. Cada caso de uso ensambla la entidad y delega en el repositorio.
 
 ### Beneficio
 
-Reduce lógica de negocio en la presentación, mejora la trazabilidad de cada operación y hace más predecible la evolución funcional del módulo.
+Reduce lógica de persistencia en la presentación, mejora la trazabilidad de cada operación y hace más predecible la evolución funcional del módulo.
 
 ## ¿Por qué usamos TaskFacade?
 
@@ -76,7 +76,7 @@ Simplifica los componentes, concentra la lógica de interacción de la UI en una
 
 ### Contexto
 
-El formulario de creación de tareas necesita validaciones explícitas, tipado y control del estado del formulario en un flujo predecible.
+El formulario de creación de tareas necesita validaciones explícitas (título obligatorio, categoría obligatoria, longitudes máximas), tipado y control del estado del formulario en un flujo predecible.
 
 ### Decisión
 
@@ -108,7 +108,7 @@ La aplicación necesita una base visual coherente (colores, espaciados, radios, 
 
 ### Decisión
 
-Definir tokens de diseño en `src/theme/variables.scss` como fuente central de valores visuales consumidos por estilos de la aplicación.
+Definir tokens de diseño en `src/theme/` como fuente central de valores visuales consumidos por estilos de la aplicación.
 
 ### Beneficio
 
@@ -118,11 +118,11 @@ Unifica la identidad visual, simplifica ajustes de tema y evita valores hardcode
 
 ### Contexto
 
-Las entidades del dominio (`Task`) contienen datos y reglas de negocio, pero la UI necesita información adicional orientada a la presentación (etiquetas de categoría, colores de estado, textos localizados).
+Las entidades del dominio (`Task`) definen la forma de los datos persistidos, pero la UI necesita información adicional orientada a la presentación (etiquetas de categoría, colores de estado).
 
 ### Decisión
 
-Introducir `TaskViewModel` en la capa de presentación y `TaskMapper` para transformar entidades del dominio en modelos listos para renderizar.
+Introducir `TaskViewModel` en la capa de presentación y `TaskMapper` para transformar entidades del dominio en modelos listos para renderizar. Las etiquetas de categoría se resuelven desde `task-categories.catalog.ts`.
 
 ### Beneficio
 
@@ -140,7 +140,7 @@ Gestionar `IonToast` desde `TaskListComponent` con estado local (`toastOpen`, `t
 
 ### Beneficio
 
-Mantiene el dominio y el facade libres de dependencias de Ionic, respeta la separación de capas y facilita cambiar el mecanismo de feedback sin tocar la lógica de negocio.
+Mantiene el dominio y el facade libres de dependencias de Ionic, respeta la separación de capas y facilita cambiar el mecanismo de feedback sin tocar los casos de uso.
 
 ## ¿Por qué usamos alias de TypeScript?
 

@@ -1,6 +1,8 @@
 <section class="search-bar">
+  <label [id]="labelId" class="visually-hidden">{{ accessibleLabel }}</label>
   <ion-searchbar
-    [attr.aria-label]="ariaLabel ?? placeholder"
+    [attr.aria-labelledby]="labelId"
+    [attr.aria-label]="accessibleLabel"
     [placeholder]="placeholder"
     [value]="value"
     [debounce]="debounce"
