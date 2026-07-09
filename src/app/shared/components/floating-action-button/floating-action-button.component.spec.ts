@@ -31,11 +31,10 @@ describe('FloatingActionButtonComponent', () => {
     expect(icon?.getAttribute('name')).toBe('add');
   });
 
-  it('should render aria-label', () => {
-    const buttonDebugEl = fixture.debugElement.query(By.css('ion-fab-button'));
-    const hiddenAriaEl = buttonDebugEl?.nativeElement?.querySelector('[aria-label="Crear tarea"]');
-
-    expect(hiddenAriaEl).not.toBeNull();
+  it('should expose aria-label without duplicate hidden labels', () => {
+    expect(component.ariaLabel).toBe('Crear tarea');
+    expect(fixture.nativeElement.querySelector('span[hidden]')).toBeNull();
+    expect(fixture.nativeElement.querySelector('ion-fab-button')).toBeTruthy();
   });
 
   it('should reflect disabled state', () => {

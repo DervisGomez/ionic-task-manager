@@ -1,6 +1,6 @@
-# Decisiones de diseño (hasta Sprint 4)
+# Decisiones de diseño (hasta Sprint 5)
 
-Este documento resume las decisiones arquitectónicas principales adoptadas en el proyecto hasta el Sprint 4. Cada decisión incluye su contexto, la elección realizada y el beneficio obtenido en el estado actual del producto.
+Este documento resume las decisiones arquitectónicas principales adoptadas en el proyecto hasta el Sprint 5. Cada decisión incluye su contexto, la elección realizada y el beneficio obtenido en el estado actual del producto.
 
 ## ¿Por qué usamos Clean Architecture?
 
@@ -113,6 +113,34 @@ Definir tokens de diseño en `src/theme/variables.scss` como fuente central de v
 ### Beneficio
 
 Unifica la identidad visual, simplifica ajustes de tema y evita valores hardcodeados dispersos en múltiples archivos de estilo.
+
+## ¿Por qué usamos ViewModel y Mapper?
+
+### Contexto
+
+Las entidades del dominio (`Task`) contienen datos y reglas de negocio, pero la UI necesita información adicional orientada a la presentación (etiquetas de categoría, colores de estado, textos localizados).
+
+### Decisión
+
+Introducir `TaskViewModel` en la capa de presentación y `TaskMapper` para transformar entidades del dominio en modelos listos para renderizar.
+
+### Beneficio
+
+Desacopla la UI del modelo de dominio, centraliza la lógica de adaptación visual y evita que los componentes conozcan detalles de mapeo.
+
+## ¿Por qué la retroalimentación visual vive en la presentación?
+
+### Contexto
+
+Las operaciones CRUD necesitan confirmar al usuario el resultado de cada acción (éxito o error) sin contaminar el dominio ni el facade con lógica de UI.
+
+### Decisión
+
+Gestionar `IonToast` desde `TaskListComponent` con estado local (`toastOpen`, `toastMessage`, `toastColor`). El facade ejecuta la operación; el componente de página decide cómo comunicar el resultado.
+
+### Beneficio
+
+Mantiene el dominio y el facade libres de dependencias de Ionic, respeta la separación de capas y facilita cambiar el mecanismo de feedback sin tocar la lógica de negocio.
 
 ## ¿Por qué usamos alias de TypeScript?
 

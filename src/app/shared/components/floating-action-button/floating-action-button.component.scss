@@ -4,15 +4,25 @@ ion-fab {
   margin: 0 var(--app-spacing-md) calc($fab-offset + env(safe-area-inset-bottom, 0px));
 
   ion-fab-button {
-    --box-shadow: var(--app-shadow-sm);
-    transition: transform 200ms ease;
+    --box-shadow: var(--app-shadow-md);
+    transition:
+      transform var(--app-transition-fast),
+      box-shadow var(--app-transition-fast);
 
-    &:hover {
-      transform: scale(1.05);
+    ion-icon {
+      font-size: var(--app-font-size-lg);
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        --box-shadow: var(--app-shadow-lg);
+        transform: scale(1.04);
+      }
     }
 
     &:active {
-      transform: scale(0.94);
+      transform: scale(0.96);
+      --box-shadow: var(--app-shadow-sm);
     }
   }
 }

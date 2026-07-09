@@ -1,48 +1,61 @@
-$touch-target: calc(var(--app-spacing-3xl) - var(--app-spacing-xs));
+$description-max-width: calc(var(--app-spacing-3xl) * 4.25);
 
 .empty-state {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   text-align: center;
-  gap: var(--app-spacing-lg);
-  padding: 0 var(--app-spacing-md);
-  max-width: calc(var(--app-spacing-3xl) * 6);
-  animation: empty-state-appear var(--app-transition-slow) ease forwards;
+  width: 100%;
+  max-width: calc(var(--app-spacing-3xl) * 5.5);
+  padding: var(--app-spacing-2xl) var(--app-spacing-lg);
+  animation: empty-state-appear var(--app-transition-slow) forwards;
 
   &__icon {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: calc(var(--app-spacing-3xl) + var(--app-spacing-xl));
-    height: calc(var(--app-spacing-3xl) + var(--app-spacing-xl));
+    flex-shrink: 0;
+    width: calc(var(--app-spacing-3xl) * 2);
+    height: calc(var(--app-spacing-3xl) * 2);
+    margin: 0 0 var(--app-spacing-xl);
     border-radius: 50%;
-    background: color-mix(in srgb, var(--ion-color-primary) 5%, var(--ion-background-color));
+    background: color-mix(in srgb, var(--ion-color-primary) 8%, var(--ion-background-color));
 
     ion-icon {
-      font-size: var(--app-font-size-2xl);
+      font-size: calc(var(--app-font-size-2xl) + var(--app-font-size-xs));
       color: var(--app-color-text-secondary);
     }
   }
 
   &__title {
-    margin: 0;
+    margin: 0 0 var(--app-spacing-lg);
+    max-width: $description-max-width;
     color: var(--app-color-text-primary);
     font-size: var(--app-font-size-lg);
     font-weight: var(--app-font-weight-semibold);
+    line-height: var(--app-line-height-tight);
   }
 
   &__description {
-    margin: 0;
+    margin: 0 0 var(--app-spacing-2xl);
+    max-width: $description-max-width;
     color: var(--app-color-text-secondary);
-    font-size: var(--app-font-size-xs);
+    font-size: var(--app-font-size-sm);
     line-height: var(--app-line-height-relaxed);
   }
 
   &__cta {
-    min-width: calc(var(--app-spacing-3xl) * 5 + var(--app-spacing-lg));
-    min-height: $touch-target;
-    margin-top: var(--app-spacing-xs);
+    align-self: center;
+    margin: 0;
+    min-width: auto;
+    min-height: calc(var(--app-spacing-xl) + var(--app-spacing-sm));
+    font-size: var(--app-font-size-sm);
+    font-weight: var(--app-font-weight-medium);
+    --padding-start: var(--app-spacing-lg);
+    --padding-end: var(--app-spacing-lg);
+    --padding-top: var(--app-spacing-sm);
+    --padding-bottom: var(--app-spacing-sm);
 
     &::part(native) {
       transition:
@@ -51,12 +64,12 @@ $touch-target: calc(var(--app-spacing-3xl) - var(--app-spacing-xs));
     }
 
     &:hover::part(native) {
-      opacity: 0.92;
+      opacity: 0.9;
     }
 
     &:active::part(native) {
-      transform: scale(0.98);
-      opacity: 0.88;
+      transform: scale(0.96);
+      opacity: 0.8;
     }
   }
 }
@@ -69,6 +82,6 @@ $touch-target: calc(var(--app-spacing-3xl) - var(--app-spacing-xs));
 
   to {
     opacity: 1;
-    transform: translateY(calc(-1 * var(--app-spacing-2xl)));
+    transform: translateY(0);
   }
 }

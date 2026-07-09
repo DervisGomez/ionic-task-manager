@@ -1,0 +1,143 @@
+$meta-pill-height: calc(var(--app-spacing-lg) + var(--app-spacing-xs));
+$meta-pill-padding-inline: var(--app-spacing-sm);
+$meta-pill-padding-block: var(--app-spacing-xs);
+$checkbox-offset: calc(var(--app-spacing-lg) + var(--app-spacing-sm));
+
+:host {
+  display: block;
+}
+
+.task-card {
+  margin: 0;
+  border: 1px solid var(--app-color-border);
+  border-radius: var(--app-radius-lg);
+  background: var(--app-color-surface);
+  box-shadow: var(--app-shadow-md);
+  transition:
+    box-shadow var(--app-transition-fast),
+    border-color var(--app-transition-fast);
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      border-color: color-mix(in srgb, var(--app-color-border) 65%, var(--ion-color-primary));
+      box-shadow: var(--app-shadow-lg);
+    }
+  }
+}
+
+.task-card__content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--app-spacing-sm);
+  padding: var(--app-spacing-lg);
+}
+
+.task-card__header {
+  display: flex;
+  align-items: center;
+  gap: var(--app-spacing-sm);
+  min-width: 0;
+}
+
+.task-card__checkbox {
+  flex-shrink: 0;
+  margin: 0;
+}
+
+.task-card__title {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  font-size: var(--app-font-size-md);
+  font-weight: var(--app-font-weight-bold);
+  line-height: var(--app-line-height-tight);
+  color: var(--app-color-text-primary);
+}
+
+.task-card__description {
+  margin: 0;
+  padding-left: $checkbox-offset;
+  font-size: var(--app-font-size-sm);
+  font-weight: var(--app-font-weight-regular);
+  line-height: var(--app-line-height-relaxed);
+  color: var(--app-color-text-secondary);
+}
+
+.task-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--app-spacing-sm);
+  padding-left: $checkbox-offset;
+}
+
+.task-card__category,
+.task-card__status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  min-height: $meta-pill-height;
+  margin: 0;
+  padding: $meta-pill-padding-block $meta-pill-padding-inline;
+  border-radius: var(--app-radius-sm);
+  font-size: var(--app-font-size-xs);
+  font-weight: var(--app-font-weight-medium);
+  line-height: var(--app-line-height-tight);
+}
+
+.task-card__category {
+  --background: color-mix(in srgb, var(--ion-color-primary) 8%, var(--app-color-surface));
+  --color: var(--app-color-text-primary);
+  height: $meta-pill-height;
+}
+
+.task-card__status {
+  height: $meta-pill-height;
+}
+
+.task-card__actions {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 0;
+}
+
+.task-card__actions ion-button {
+  margin: 0;
+  --padding-start: var(--app-spacing-xs);
+  --padding-end: var(--app-spacing-xs);
+  --padding-top: var(--app-spacing-xs);
+  --padding-bottom: var(--app-spacing-xs);
+
+  ion-icon {
+    font-size: var(--app-font-size-md);
+  }
+
+  &::part(native) {
+    transition:
+      background-color var(--app-transition-fast),
+      opacity var(--app-transition-fast),
+      transform var(--app-transition-fast);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover::part(native) {
+      opacity: 0.9;
+      background: color-mix(in srgb, var(--ion-color-primary) 6%, transparent);
+    }
+  }
+
+  &:active::part(native) {
+    transform: scale(0.96);
+    opacity: 0.8;
+  }
+}
+
+.task-card__actions ion-button[color='danger'] {
+  @media (hover: hover) and (pointer: fine) {
+    &:hover::part(native) {
+      background: color-mix(in srgb, var(--ion-color-danger) 8%, transparent);
+    }
+  }
+}

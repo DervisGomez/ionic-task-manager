@@ -1,45 +1,89 @@
 <ion-content [fullscreen]="true">
   <div class="task-list__container">
-    <!-- Page Header -->
-    <app-page-header
-      title="Gestor de tareas"
-      subtitle="Organiza tu día y enfócate en lo importante."
-    ></app-page-header>
+    <div class="task-list__toolbar">
+      <app-page-header
+        title="Gestor de tareas"
+        subtitle="Organiza tu día y enfócate en lo importante."
+      ></app-page-header>
 
-    <!-- Search -->
-    <app-search-bar
-      placeholder="Buscar tareas..."
-      [value]="searchTerm"
-      (valueChange)="onSearchChanged($event)"
-    ></app-search-bar>
+      <app-search-bar
+        placeholder="Buscar tareas..."
+        [value]="searchTerm"
+        (valueChange)="onSearchChanged($event)"
+      ></app-search-bar>
 
-    <!-- Filters -->
-    <app-category-filter
-      [options]="categories"
-      [selected]="selectedCategory"
-      (selectedChange)="onCategorySelected($event)"
-    ></app-category-filter>
+      <app-category-filter
+        [options]="categories"
+        [selected]="selectedCategory"
+        (selectedChange)="onCategorySelected($event)"
+      ></app-category-filter>
+    </div>
 
-    <!-- Content -->
-    <main class="task-list__content">
-      <app-task-form (submitTask)="onCreateTask($event)"></app-task-form>
-
-      <!-- Empty State -->
-      <ng-container *ngIf="tasks.length === 0">
+    <main
+      class="task-list__content"
+      [class.task-list__content--empty]="!hasTasks"
+      [class.task-list__content--list]="hasTasks"
+    >
+      <ng-container *ngIf="!hasTasks">
         <app-empty-state
           icon="clipboard-outline"
           title="Aún no hay tareas"
           description="Crea tu primera tarea y comienza a organizar tu día."
           buttonText="Añade tu primera tarea"
+          (action)="openCreateModal()"
         ></app-empty-state>
       </ng-container>
 
-      <ion-list *ngIf="tasks.length > 0">
-        <ion-item *ngFor="let task of tasks">{{ task.title }}</ion-item>
+      <ion-list *ngIf="hasTasks" aria-label="Lista de tareas">
+        <app-task-card
+          *ngFor="let task of filteredTasks"
+          [task]="task"
+          (toggleCompleted)="onToggleCompleted($event)"
+          (edit)="onEditTask($event)"
+          (delete)="onDeleteTask($event)"
+        ></app-task-card>
       </ion-list>
     </main>
   </div>
 
-  <!-- Floating Action Button -->
-  <app-floating-action-button icon="add" ariaLabel="Crear tarea"></app-floating-action-button>
+  <app-floating-action-button
+    *ngIf="hasTasks"
+    icon="add"
+    ariaLabel="Crear tarea"
+    (action)="openCreateModal()"
+  ></app-floating-action-button>
+
+  <ion-modal
+    class="task-list__modal"
+    [isOpen]="isCreateModalOpen"
+    aria-labelledby="task-form-modal-title"
+    (didDismiss)="closeCreateModal()"
+  >
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-title id="task-form-modal-title">{{
+            editingTask ? 'Editar tarea' : 'Nueva tarea'
+          }}</ion-title>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="task-list__modal-content">
+        <app-task-form
+          [task]="editingTask ?? undefined"
+          [submitButtonText]="editingTask ? 'Guardar' : 'Guardar tarea'"
+          (submitTask)="onSubmitTask($event)"
+          (cancel)="closeCreateModal()"
+        ></app-task-form>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+
+  <ion-toast
+    [isOpen]="toastOpen"
+    [message]="toastMessage"
+    [color]="toastColor"
+    [duration]="2000"
+    position="bottom"
+    (didDismiss)="toastOpen = false"
+  ></ion-toast>
 </ion-content>

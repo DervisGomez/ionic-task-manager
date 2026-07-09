@@ -15,24 +15,37 @@ src/app/
 │       ├── data/
 │       │   ├── datasources/
 │       │   └── repositories/
+│       │       └── in-memory-task.repository.ts
 │       ├── domain/
 │       │   ├── commands/
 │       │   ├── entities/
 │       │   ├── repositories/
 │       │   └── use-cases/
 │       ├── pages/
+│       │   └── task-list/
 │       ├── presentation/
 │       │   ├── components/
+│       │   │   ├── task-card/
+│       │   │   └── task-form/
 │       │   ├── facades/
-│       │   ├── services/
+│       │   ├── mappers/
+│       │   ├── models/
 │       │   └── state/
 │       ├── tasks-routing-module.ts
 │       ├── tasks.providers.ts
 │       └── tasks.module.ts
 └── shared/
     ├── components/
+    │   ├── category-filter/
+    │   ├── empty-state/
+    │   ├── floating-action-button/
+    │   ├── page-header/
+    │   └── search-bar/
     ├── models/
     └── shared.module.ts
+
+src/theme/
+└── variables.scss
 ```
 
 ## Carpetas principales
@@ -60,11 +73,15 @@ En el estado actual del proyecto, esta carpeta **no está presente**. La documen
 
 `shared/` contiene piezas reutilizables por varias pantallas o features, especialmente elementos de interfaz y modelos simples compartidos.
 
-Aquí debe ir código como:
+Componentes actuales:
 
-- componentes visuales reutilizables
-- modelos ligeros usados por más de una pantalla
-- módulos compartidos que agrupan componentes reutilizables
+| Componente                      | Responsabilidad                           |
+| ------------------------------- | ----------------------------------------- |
+| `PageHeaderComponent`           | Cabecera de página con título y subtítulo |
+| `SearchBarComponent`            | Campo de búsqueda con debounce            |
+| `CategoryFilterComponent`       | Filtro por categoría con patrón tablist   |
+| `EmptyStateComponent`           | Estado vacío con icono, texto y CTA       |
+| `FloatingActionButtonComponent` | Botón flotante de acción principal        |
 
 No debería ir en `shared/`:
 
@@ -73,23 +90,9 @@ No debería ir en `shared/`:
 - repositorios
 - componentes o estados acoplados a una feature específica
 
-Si una pieza solo tiene sentido dentro de `tasks`, no debería vivir en `shared/`, aunque sea reutilizable dentro de esa misma feature.
-
 ### `features/`
 
 `features/` es el núcleo de la organización funcional del proyecto. Cada carpeta dentro de `features/` representa una capacidad de negocio o módulo funcional autónomo.
-
-Aquí debe ir código como:
-
-- módulos funcionales completos
-- rutas de la feature
-- composición de dependencias propia de la feature
-- sus capas internas de dominio, datos y presentación
-
-No debería ir en `features/`:
-
-- recursos completamente transversales a toda la aplicación
-- infraestructura global ajena a una funcionalidad concreta
 
 En el proyecto actual, `tasks/` es la feature implementada y contiene todos los elementos necesarios para operar esa funcionalidad de forma cohesionada.
 
@@ -99,12 +102,12 @@ En el proyecto actual, `tasks/` es la feature implementada y contiene todos los 
 
 `domain/` contiene el núcleo de negocio de la feature.
 
-Aquí debe ir:
+Contenido actual:
 
-- entidades del dominio
-- comandos o estructuras de entrada del negocio
-- contratos de repositorio
-- casos de uso
+- **Entidades**: `Task`, `Category`
+- **Comandos**: `CreateTaskCommand`, `UpdateTaskCommand`
+- **Contratos**: `TaskRepository`
+- **Casos de uso**: `GetTasksUseCase`, `CreateTaskUseCase`, `UpdateTaskUseCase`, `DeleteTaskUseCase`
 
 No debe ir:
 
@@ -112,44 +115,37 @@ No debe ir:
 - detalles de persistencia
 - implementaciones concretas de infraestructura
 
-Es la carpeta que debe permanecer más estable frente a cambios de interfaz o de almacenamiento.
-
 ### `data/`
 
 `data/` implementa el acceso real a los datos definidos por el dominio.
 
-Aquí debe ir:
+Contenido actual:
 
-- implementaciones concretas de repositorios
-- datasources o mecanismos de acceso a almacenamiento
-- adaptadores de infraestructura necesarios para persistir o recuperar datos
-
-No debe ir:
-
-- reglas de negocio
-- estado de pantalla
-- componentes o páginas
-
-Su responsabilidad es técnica: resolver cómo se guardan o leen los datos sin alterar la lógica del dominio.
+- `InMemoryTaskRepository` — implementación in-memory del contrato `TaskRepository`
+- `datasources/` — preparada para futuras fuentes de datos (Firebase, API, etc.)
 
 ### `presentation/`
 
 `presentation/` contiene las piezas que conectan la UI con el dominio.
 
-Aquí debe ir:
+Contenido actual:
 
-- componentes de presentación propios de la feature
-- facades que orquestan casos de uso
-- estado de pantalla
-- servicios orientados a la capa de presentación
+| Carpeta / archivo          | Responsabilidad                                       |
+| -------------------------- | ----------------------------------------------------- |
+| `components/task-form/`    | Formulario reactivo de creación/edición               |
+| `components/task-card/`    | Tarjeta de tarea con acciones                         |
+| `facades/task.facade.ts`   | Orquestación de casos de uso y estado de pantalla     |
+| `mappers/task.mapper.ts`   | Adaptación de entidades del dominio a `TaskViewModel` |
+| `models/task.viewmodel.ts` | Modelo de datos orientado a la UI                     |
+| `state/task.state.ts`      | Interfaz del estado interno del facade                |
 
-No debe ir:
+### `pages/`
 
-- persistencia concreta
-- contratos de infraestructura
-- lógica de negocio que pertenezca al dominio
+`pages/` aloja los componentes de página que actúan como contenedores de la feature.
 
-Su función es adaptar las interacciones de usuario al lenguaje del dominio y exponer a la UI un estado listo para renderizar.
+Contenido actual:
+
+- `task-list/` — pantalla principal con listado, búsqueda, filtros, modal y toast
 
 ## Por qué la arquitectura está organizada por feature
 
@@ -163,5 +159,3 @@ Con una estructura por feature:
 - la escalabilidad mejora al incorporar nuevas capacidades sin mezclar responsabilidades
 
 Además, este enfoque encaja mejor con Clean Architecture porque cada feature puede contener sus propias capas (`domain`, `data`, `presentation`) sin depender de una estructura global centrada en tipos de archivo.
-
-En otras palabras, la pregunta principal deja de ser "¿qué tipo de archivo es?" y pasa a ser "¿a qué capacidad del negocio pertenece?". Esa decisión hace que la estructura del proyecto refleje mejor el problema que resuelve la aplicación.

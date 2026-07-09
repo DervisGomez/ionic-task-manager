@@ -9,8 +9,6 @@
  * https://ionicframework.com/docs/layout/global-stylesheets
  */
 
-@use './theme';
-
 /* Core CSS required for Ionic components to work properly */
 @import '@ionic/angular/css/core.css';
 
@@ -110,19 +108,23 @@ ion-header {
 }
 
 /* ==========================================================================
-    Utilities
+    Accessibility
     ========================================================================== */
 
-.surface {
-  background: var(--app-color-surface);
-  border-radius: var(--app-radius-lg);
-  box-shadow: var(--app-shadow-sm);
+:focus {
+  outline: none;
 }
 
-.text-secondary {
-  color: var(--app-color-text-secondary);
+:focus-visible {
+  outline: 2px solid var(--ion-color-primary);
+  outline-offset: 2px;
 }
 
-.text-center {
-  text-align: center;
+ion-button:focus-visible::part(native),
+ion-fab-button:focus-visible::part(native),
+ion-chip:focus-visible,
+ion-checkbox:focus-visible,
+ion-searchbar:focus-visible {
+  outline: 2px solid var(--ion-color-primary);
+  outline-offset: 2px;
 }

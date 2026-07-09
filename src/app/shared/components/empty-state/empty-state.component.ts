@@ -35,7 +35,7 @@ export class EmptyStateComponent {
   /**
    * Emite la accion principal del estado vacio.
    */
-  @Output() action = new EventEmitter<void>();
+  @Output() readonly action = new EventEmitter<void>();
 
   onAction(): void {
     this.action.emit();

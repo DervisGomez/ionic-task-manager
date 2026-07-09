@@ -16,7 +16,15 @@ $touch-target: calc(var(--app-spacing-3xl) - var(--app-spacing-xs));
     --color: var(--app-color-text-secondary);
     border: 1px solid var(--app-color-border);
     border-radius: $touch-target;
-    transition: all var(--app-transition-fast);
+    font-size: var(--app-font-size-sm);
+    font-weight: var(--app-font-weight-medium);
+    line-height: var(--app-line-height-tight);
+    transition:
+      background-color var(--app-transition-fast),
+      border-color var(--app-transition-fast),
+      box-shadow var(--app-transition-fast),
+      color var(--app-transition-fast),
+      transform var(--app-transition-fast);
 
     &:active {
       transform: scale(0.96);

@@ -1,5 +1,5 @@
 .page-header {
-  margin-bottom: var(--app-spacing-3xl);
+  margin-bottom: var(--app-spacing-2xl);
 
   .title {
     margin: 0;
@@ -10,9 +10,9 @@
   }
 
   .subtitle {
-    margin-top: var(--app-spacing-md);
+    margin-top: var(--app-spacing-sm);
     color: var(--app-color-text-secondary);
-    font-size: var(--app-font-size-md);
+    font-size: var(--app-font-size-sm);
     font-weight: var(--app-font-weight-regular);
     line-height: var(--app-line-height-normal);
   }

@@ -1,6 +1,64 @@
-<form [formGroup]="form" (ngSubmit)="onSubmit()">
-  <input type="text" formControlName="title" placeholder="Título" />
-  <textarea formControlName="description" placeholder="Descripción"></textarea>
-  <input type="text" formControlName="categoryId" placeholder="Categoría" />
-  <button type="submit">Guardar tarea</button>
+<form
+  [formGroup]="form"
+  (ngSubmit)="onSubmit()"
+  class="task-form"
+  aria-label="Formulario de tarea"
+  novalidate
+>
+  <div class="task-form__field">
+    <label class="task-form__label" for="task-title-input">Título</label>
+    <ion-input
+      id="task-title-input"
+      class="task-form__input"
+      formControlName="title"
+      placeholder="Ej. Planificar sprint"
+      [errorText]="getFieldError('title')"
+      [attr.aria-invalid]="getFieldError('title') ? true : null"
+      autocomplete="off"
+    ></ion-input>
+  </div>
+
+  <div class="task-form__field">
+    <label class="task-form__label" for="task-description-input">Descripción</label>
+    <ion-textarea
+      id="task-description-input"
+      class="task-form__textarea"
+      formControlName="description"
+      placeholder="Ej. Definir alcance y prioridades"
+      rows="4"
+      [autoGrow]="true"
+      [errorText]="getFieldError('description')"
+      [attr.aria-invalid]="getFieldError('description') ? true : null"
+    ></ion-textarea>
+  </div>
+
+  <fieldset class="task-form__field task-form__field--category">
+    <legend class="task-form__label">Categoría</legend>
+    <input type="hidden" formControlName="categoryId" aria-hidden="true" tabindex="-1" />
+    <div class="task-form__category-options" role="radiogroup" aria-label="Categoría">
+      <ion-chip
+        class="task-form__category-chip"
+        [class.task-form__category-chip--selected]="form.controls.categoryId.value === 'work'"
+        role="radio"
+        [attr.aria-checked]="form.controls.categoryId.value === 'work'"
+        (click)="form.controls.categoryId.setValue('work')"
+      >
+        Trabajo
+      </ion-chip>
+      <ion-chip
+        class="task-form__category-chip"
+        [class.task-form__category-chip--selected]="form.controls.categoryId.value === 'personal'"
+        role="radio"
+        [attr.aria-checked]="form.controls.categoryId.value === 'personal'"
+        (click)="form.controls.categoryId.setValue('personal')"
+      >
+        Personal
+      </ion-chip>
+    </div>
+  </fieldset>
+
+  <div class="task-form__actions">
+    <ion-button type="button" fill="outline" (click)="onCancel()">Cancelar</ion-button>
+    <ion-button type="submit">{{ submitButtonText }}</ion-button>
+  </div>
 </form>

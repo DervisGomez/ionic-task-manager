@@ -4,6 +4,29 @@ Todos los cambios importantes de este proyecto se documentan en este archivo.
 
 El formato está basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 
+## [1.0.0] — v1.0.0 (2026-07-08)
+
+### Added
+
+- CRUD completo de tareas: crear, leer, editar y eliminar desde la interfaz.
+- `TaskCardComponent` con checkbox de completado, acciones de edición y eliminación.
+- Búsqueda en tiempo real por título y descripción.
+- Filtrado por categoría con navegación por teclado (patrón tablist).
+- `TaskMapper` y `TaskViewModel` para adaptar entidades del dominio a la UI.
+- Retroalimentación visual con `IonToast` tras operaciones exitosas o fallidas.
+- Confirmación de eliminación mediante `IonAlert`.
+- Modal de creación/edición con `IonModal` y `aria-labelledby`.
+- Mejoras de accesibilidad WCAG 2.2 AA: ARIA labels contextuales, foco visible, formulario accesible.
+- Polish visual con Design Tokens: jerarquía tipográfica, transiciones y sombras.
+- Consolidación de Design Tokens de tipografía en `variables.scss`.
+- Documentación técnica actualizada: README, arquitectura, roadmap y changelog.
+
+### Changed
+
+- `TaskFacade` ampliado con operaciones de actualización, eliminación, búsqueda y filtrado.
+- `TaskFormComponent` reutilizado para creación y edición de tareas.
+- Estructura de presentación ampliada con `task-card`, `mappers` y `models`.
+
 ## [0.4.0]
 
 ### Added

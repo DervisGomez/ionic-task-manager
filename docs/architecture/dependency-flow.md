@@ -2,67 +2,94 @@
 
 Este documento describe cómo fluye una operación a través de las capas del proyecto, desde la interacción del usuario hasta la persistencia de datos y la actualización de la interfaz.
 
-Como ejemplo se utiliza la **creación de una tarea**, el flujo implementado en la feature `tasks`.
-
-## Diagrama del flujo
+## Diagrama general
 
 ```
 Usuario
    ↓
-TaskFormComponent
-   ↓
-TaskListComponent
+TaskListComponent / TaskCardComponent / TaskFormComponent
    ↓
 TaskFacade
    ↓
-CreateTaskUseCase
+Use Case (Create · Update · Delete · GetTasks)
    ↓
-TaskRepository
+TaskRepository (contrato)
    ↓
 InMemoryTaskRepository
    ↓
-TaskFacade
+TaskFacade (recarga y aplica filtros)
    ↓
-UI
+TaskMapper → TaskViewModel
+   ↓
+UI (listado actualizado + IonToast)
 ```
 
-## Recorrido paso a paso
+## Operaciones disponibles
+
+| Operación | Origen UI                        | Use Case             | Resultado en UI                |
+| --------- | -------------------------------- | -------------------- | ------------------------------ |
+| Listar    | `ngOnInit` → `loadTasks()`       | `GetTasksUseCase`    | Listado o estado vacío         |
+| Crear     | `TaskFormComponent` → modal      | `CreateTaskUseCase`  | Toast de éxito, modal cerrado  |
+| Editar    | `TaskCardComponent` → modal      | `UpdateTaskUseCase`  | Toast de éxito, modal cerrado  |
+| Eliminar  | `TaskCardComponent` → `IonAlert` | `DeleteTaskUseCase`  | Toast de éxito                 |
+| Completar | `TaskCardComponent` → checkbox   | `UpdateTaskUseCase`  | Listado actualizado            |
+| Buscar    | `SearchBarComponent`             | — (filtro en facade) | Listado filtrado               |
+| Filtrar   | `CategoryFilterComponent`        | — (filtro en facade) | Listado filtrado por categoría |
+
+## Flujo de creación de tarea
 
 ### Usuario
 
-El usuario completa el formulario de creación de tarea (título, descripción y categoría) y confirma el envío. Es el origen de la acción; no conoce las capas internas de la aplicación.
+El usuario completa el formulario (título, descripción y categoría) y confirma el envío desde el modal.
 
 ### TaskFormComponent
 
-Componente de presentación responsable del formulario. Valida los datos introducidos y, si son correctos, emite un `CreateTaskCommand` con la información necesaria. No accede al dominio ni a la infraestructura directamente: solo comunica la intención del usuario hacia el componente contenedor.
+Valida los datos y emite un `CreateTaskCommand`. No accede al dominio directamente.
 
 ### TaskListComponent
 
-Página que hospeda el formulario y el listado de tareas. Escucha el evento emitido por `TaskFormComponent` y delega la operación a `TaskFacade`. Actúa como coordinador de la pantalla: conecta los componentes de UI con el punto de entrada al dominio, sin invocar casos de uso ni repositorios por su cuenta.
+Escucha el evento del formulario, delega a `TaskFacade.createTask()` y muestra un `IonToast` según el resultado. La retroalimentación visual vive en la capa de presentación, no en el facade.
 
 ### TaskFacade
 
-Punto de entrada entre la presentación y el dominio. Recibe el comando desde `TaskListComponent`, invoca `CreateTaskUseCase` y, una vez completada la operación, recarga el listado de tareas para actualizar el estado de la pantalla. Centraliza el estado visible para la UI (tareas, carga y errores).
+Invoca `CreateTaskUseCase` y recarga el listado con `loadTasks()`, aplicando los filtros activos de búsqueda y categoría.
 
 ### CreateTaskUseCase
 
-Caso de uso del dominio que encapsula la lógica de creación. Construye la entidad `Task` a partir del comando recibido — asignando identificador, fechas y estado inicial — y solicita su persistencia al repositorio. No conoce detalles de la interfaz ni de cómo se almacenan los datos.
+Construye la entidad `Task` (identificador, fechas, estado inicial) y solicita persistencia al repositorio.
 
-### TaskRepository
+### TaskRepository → InMemoryTaskRepository
 
-Contrato abstracto definido en el dominio. `CreateTaskUseCase` depende de esta abstracción, no de una implementación concreta. Expone la operación `createTask` sin especificar dónde ni cómo se guardará la entidad.
+El contrato define la operación; la implementación almacena la entidad en memoria.
 
-### InMemoryTaskRepository
+### Retorno a la UI
 
-Implementación concreta del contrato en la capa de datos. Recibe la entidad `Task` y la almacena en memoria. Es la pieza de infraestructura que materializa la operación de persistencia; el dominio nunca la referencia directamente.
+`TaskFacade` actualiza su estado interno. `TaskMapper` transforma las entidades en `TaskViewModel` y el listado se renderiza con la nueva tarea.
 
-### TaskFacade (retorno)
+## Flujo de edición y eliminación
 
-Tras la persistencia, el control vuelve a `TaskFacade`. Este recarga las tareas disponibles y actualiza su estado interno con el nuevo listado, de modo que la pantalla refleje el resultado de la operación.
+### Edición
 
-### UI
+1. El usuario pulsa editar en `TaskCardComponent`.
+2. `TaskListComponent` abre el modal con `TaskFormComponent` precargado.
+3. Al enviar, `TaskFacade.updateTask()` invoca `UpdateTaskUseCase`.
+4. Se muestra toast de confirmación o error.
 
-`TaskListComponent` lee el estado expuesto por `TaskFacade` (tareas, indicador de carga y posibles errores) y la interfaz se actualiza para mostrar la tarea recién creada en el listado.
+### Eliminación
+
+1. El usuario pulsa eliminar en `TaskCardComponent`.
+2. `TaskListComponent` presenta un `IonAlert` de confirmación.
+3. Si confirma, `TaskFacade.deleteTask()` invoca `DeleteTaskUseCase`.
+4. Se muestra toast de confirmación o error.
+
+## Flujo de búsqueda y filtrado
+
+La búsqueda y el filtrado por categoría se resuelven en `TaskFacade` sin invocar casos de uso adicionales:
+
+1. `SearchBarComponent` emite el término de búsqueda.
+2. `CategoryFilterComponent` emite la categoría seleccionada.
+3. `TaskFacade` aplica ambos filtros sobre `state.tasks` y actualiza `state.filteredTasks`.
+4. La UI reacciona al cambio de `filteredTasks`.
 
 ## Principio del flujo
 

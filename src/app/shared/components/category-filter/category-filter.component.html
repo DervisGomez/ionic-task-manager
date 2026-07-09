@@ -3,9 +3,12 @@
     <ion-chip
       class="category-filter__chip"
       [class.category-filter__chip--selected]="option.id === selected"
+      [id]="'category-tab-' + option.id"
       role="tab"
       [attr.aria-selected]="option.id === selected ? 'true' : 'false'"
+      [attr.tabindex]="option.id === selected ? 0 : -1"
       (click)="select(option.id)"
+      (keydown)="onKeydown($event, option.id)"
     >
       {{ option.label }}
     </ion-chip>

@@ -1,5 +1,7 @@
 .search-bar {
-  margin-bottom: var(--app-spacing-lg);
+  display: block;
+  width: 100%;
+  margin-bottom: var(--app-spacing-xl);
 
   ion-searchbar {
     --background: var(--app-color-surface);
@@ -15,10 +17,15 @@
     --color: var(--app-color-text-primary);
     min-height: calc(var(--app-spacing-xl) + var(--app-spacing-sm));
     padding: 0;
-    transition: box-shadow var(--app-transition-fast);
+    border: 1px solid var(--app-color-border);
+    border-radius: var(--app-radius-lg);
+    transition:
+      border-color var(--app-transition-fast),
+      box-shadow var(--app-transition-fast);
   }
 
   &:focus-within ion-searchbar {
     --box-shadow: var(--app-shadow-sm);
+    border-color: color-mix(in srgb, var(--ion-color-primary) 35%, var(--app-color-border));
   }
 }

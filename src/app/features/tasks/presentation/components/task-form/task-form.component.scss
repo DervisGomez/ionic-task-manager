@@ -1,0 +1,120 @@
+$touch-target: calc(var(--app-spacing-3xl) - var(--app-spacing-xs));
+
+.task-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--app-spacing-xl);
+}
+
+.task-form__field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--app-spacing-sm);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+
+.task-form__field--category {
+  gap: var(--app-spacing-sm);
+}
+
+.task-form__label {
+  font-size: var(--app-font-size-sm);
+  font-weight: var(--app-font-weight-semibold);
+  line-height: var(--app-line-height-tight);
+  color: var(--app-color-text-primary);
+}
+
+.task-form__input,
+.task-form__textarea {
+  width: 100%;
+  --background: var(--app-color-surface);
+  --color: var(--app-color-text-primary);
+  --placeholder-color: color-mix(
+    in srgb,
+    var(--app-color-text-secondary) 55%,
+    var(--app-color-text-primary)
+  );
+  --placeholder-opacity: 1;
+  --padding-start: var(--app-spacing-md);
+  --padding-end: var(--app-spacing-md);
+  --border-radius: var(--app-radius-lg);
+  border: 1px solid var(--app-color-border);
+  border-radius: var(--app-radius-lg);
+  transition:
+    border-color var(--app-transition-fast),
+    box-shadow var(--app-transition-fast);
+
+  &:focus-within {
+    border-color: color-mix(in srgb, var(--ion-color-primary) 35%, var(--app-color-border));
+    box-shadow: var(--app-shadow-sm);
+  }
+}
+
+.task-form__input {
+  min-height: calc(var(--app-spacing-xl) + var(--app-spacing-sm));
+}
+
+.task-form__textarea {
+  min-height: calc(var(--app-spacing-3xl) * 2);
+  --padding-top: var(--app-spacing-md);
+  --padding-bottom: var(--app-spacing-md);
+}
+
+.task-form__category-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--app-spacing-sm);
+}
+
+.task-form__category-chip {
+  margin: 0;
+  min-height: $touch-target;
+  --padding-start: var(--app-spacing-xl);
+  --padding-end: var(--app-spacing-xl);
+  --background: var(--app-color-surface);
+  border: 1px solid var(--app-color-border);
+  border-radius: $touch-target;
+  font-size: var(--app-font-size-sm);
+  font-weight: var(--app-font-weight-medium);
+  line-height: var(--app-line-height-tight);
+  color: var(--app-color-text-secondary);
+  transition:
+    background-color var(--app-transition-fast),
+    border-color var(--app-transition-fast),
+    box-shadow var(--app-transition-fast),
+    color var(--app-transition-fast),
+    transform var(--app-transition-fast);
+  cursor: pointer;
+
+  &:active {
+    transform: scale(0.96);
+  }
+
+  &--selected {
+    --background: var(--ion-color-primary);
+    --color: var(--ion-color-primary-contrast);
+    border-color: var(--ion-color-primary);
+    font-weight: var(--app-font-weight-semibold);
+    box-shadow: var(--app-shadow-sm);
+  }
+}
+
+.task-form__actions {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-self: flex-end;
+  gap: var(--app-spacing-md);
+  width: auto;
+  padding-top: var(--app-spacing-md);
+}
+
+.task-form__actions ion-button {
+  flex: 0 0 auto;
+  margin: 0;
+  min-width: calc(var(--app-spacing-3xl) * 2);
+}

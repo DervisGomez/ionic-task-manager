@@ -56,4 +56,28 @@ describe('CategoryFilterComponent', () => {
 
     expect(emitSpy).not.toHaveBeenCalled();
   });
+
+  it('should mark the selected tab with aria-selected', () => {
+    const selectedTab = fixture.nativeElement.querySelector(
+      'ion-chip[aria-selected="true"]',
+    ) as HTMLElement;
+
+    expect(selectedTab?.textContent?.trim()).toBe('Todas');
+  });
+
+  it('should expose tabindex 0 only on the selected tab', () => {
+    const tabs = fixture.nativeElement.querySelectorAll('ion-chip[role="tab"]');
+
+    expect(tabs[0].getAttribute('tabindex')).toBe('0');
+    expect(tabs[1].getAttribute('tabindex')).toBe('-1');
+    expect(tabs[2].getAttribute('tabindex')).toBe('-1');
+  });
+
+  it('should navigate with keyboard arrows', () => {
+    const emitSpy = spyOn(component.selectedChange, 'emit');
+
+    component.onKeydown(new KeyboardEvent('keydown', { key: 'ArrowRight' }), 'all');
+
+    expect(emitSpy).toHaveBeenCalledOnceWith('work');
+  });
 });

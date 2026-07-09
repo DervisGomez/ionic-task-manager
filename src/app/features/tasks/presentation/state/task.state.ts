@@ -7,6 +7,15 @@ export interface TaskState {
   /** Listado de tareas mostradas en la UI. */
   readonly tasks: readonly Task[];
 
+  /** Listado de tareas filtradas mostradas en la UI. */
+  readonly filteredTasks: readonly Task[];
+
+  /** Término de búsqueda activo. */
+  readonly searchTerm: string;
+
+  /** Categoría seleccionada para filtrar. */
+  readonly selectedCategory: string;
+
   /** Indica si hay una operación en curso. */
   readonly loading: boolean;
 

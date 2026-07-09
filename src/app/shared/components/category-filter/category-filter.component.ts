@@ -22,7 +22,16 @@ export class CategoryFilterComponent {
   /**
    * Emite únicamente el id cuando cambia la selección.
    */
-  @Output() selectedChange = new EventEmitter<string>();
+  @Output() readonly selectedChange = new EventEmitter<string>();
+
+  private static readonly NAVIGATION_KEYS = [
+    'ArrowLeft',
+    'ArrowRight',
+    'ArrowUp',
+    'ArrowDown',
+    'Home',
+    'End',
+  ] as const;
 
   /**
    * Selecciona el id y emite su valor únicamente si cambia la selección.
@@ -33,5 +42,56 @@ export class CategoryFilterComponent {
     }
 
     this.selectedChange.emit(id);
+    this.focusTab(id);
+  }
+
+  onKeydown(event: KeyboardEvent, optionId: string): void {
+    if (event.key === ' ' || event.key === 'Enter') {
+      event.preventDefault();
+      this.select(optionId);
+      return;
+    }
+
+    if (
+      !CategoryFilterComponent.NAVIGATION_KEYS.includes(
+        event.key as (typeof CategoryFilterComponent.NAVIGATION_KEYS)[number],
+      )
+    ) {
+      return;
+    }
+
+    event.preventDefault();
+
+    const optionIds = this.options.map((option) => option.id);
+    const currentIndex = optionIds.indexOf(optionId);
+    let nextIndex = currentIndex;
+
+    switch (event.key) {
+      case 'ArrowRight':
+      case 'ArrowDown':
+        nextIndex = (currentIndex + 1) % optionIds.length;
+        break;
+      case 'ArrowLeft':
+      case 'ArrowUp':
+        nextIndex = (currentIndex - 1 + optionIds.length) % optionIds.length;
+        break;
+      case 'Home':
+        nextIndex = 0;
+        break;
+      case 'End':
+        nextIndex = optionIds.length - 1;
+        break;
+    }
+
+    const nextId = optionIds[nextIndex];
+    this.focusTab(nextId);
+
+    if (nextId !== this.selected) {
+      this.selectedChange.emit(nextId);
+    }
+  }
+
+  private focusTab(id: string): void {
+    document.getElementById(`category-tab-${id}`)?.focus();
   }
 }

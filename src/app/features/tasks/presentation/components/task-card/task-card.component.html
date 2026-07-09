@@ -1,0 +1,38 @@
+<ion-card class="task-card" role="article" [attr.aria-labelledby]="'task-title-' + task.id">
+  <ion-card-content class="task-card__content">
+    <div class="task-card__header">
+      <ion-checkbox
+        class="task-card__checkbox"
+        [attr.aria-label]="checkboxAriaLabel"
+        [checked]="task.completed"
+        (ionChange)="onToggleCompleted()"
+      ></ion-checkbox>
+
+      <h3 class="task-card__title" [id]="'task-title-' + task.id">{{ task.title }}</h3>
+
+      <div class="task-card__actions">
+        <ion-button fill="clear" size="small" [attr.aria-label]="editAriaLabel" (click)="onEdit()">
+          <ion-icon name="create-outline" aria-hidden="true"></ion-icon>
+        </ion-button>
+        <ion-button
+          fill="clear"
+          size="small"
+          color="danger"
+          [attr.aria-label]="deleteAriaLabel"
+          (click)="onDelete()"
+        >
+          <ion-icon name="trash-outline" aria-hidden="true"></ion-icon>
+        </ion-button>
+      </div>
+    </div>
+
+    <p class="task-card__description" *ngIf="task.description">{{ task.description }}</p>
+
+    <div class="task-card__meta" role="group" aria-label="Categoría y estado">
+      <ion-chip class="task-card__category">{{ task.categoryLabel }}</ion-chip>
+      <ion-badge class="task-card__status" [color]="task.statusColor">{{
+        task.statusLabel
+      }}</ion-badge>
+    </div>
+  </ion-card-content>
+</ion-card>

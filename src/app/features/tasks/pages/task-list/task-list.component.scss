@@ -1,6 +1,3 @@
-$touch-target: calc(var(--app-spacing-3xl) - var(--app-spacing-xs));
-
-// Page layout
 .task-list__container {
   max-width: 720px;
   margin: 0 auto;
@@ -10,16 +7,58 @@ $touch-target: calc(var(--app-spacing-3xl) - var(--app-spacing-xs));
   flex-direction: column;
 }
 
-.task-list__content {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--app-spacing-3xl) 0;
+.task-list__toolbar {
+  flex-shrink: 0;
 }
 
-// Filters — extracted to CategoryFilterComponent
+.task-list__content {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-width: 0;
+}
 
-// Empty State — extracted to EmptyStateComponent
+.task-list__content--empty {
+  flex: 1 1 auto;
+  justify-content: center;
+  align-items: center;
+}
 
-// Floating Action Button — extracted to FloatingActionButtonComponent
+.task-list__content--list {
+  flex: 0 1 auto;
+  justify-content: flex-start;
+  align-items: stretch;
+}
+
+.task-list__content ion-list {
+  align-self: stretch;
+  width: 100%;
+  padding: 0;
+  background: transparent;
+
+  app-task-card {
+    display: block;
+
+    &:not(:last-child) {
+      margin-bottom: var(--app-spacing-md);
+    }
+  }
+}
+
+.task-list__modal {
+  --border-radius: var(--app-radius-xl);
+  --box-shadow: var(--app-shadow-lg);
+}
+
+.task-list__modal-content {
+  width: 100%;
+  --padding-start: var(--app-spacing-xl);
+  --padding-end: var(--app-spacing-xl);
+  --padding-top: var(--app-spacing-xl);
+  --padding-bottom: var(--app-spacing-xl);
+}
+
+.task-list__modal ion-toolbar {
+  --padding-start: var(--app-spacing-md);
+  --padding-end: var(--app-spacing-md);
+}

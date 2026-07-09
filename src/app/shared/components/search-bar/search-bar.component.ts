@@ -10,6 +10,9 @@ export class SearchBarComponent {
   /** Placeholder text displayed in the search field. */
   @Input() placeholder = 'Buscar...';
 
+  /** Accessible label for the search field. Defaults to the placeholder. */
+  @Input() ariaLabel?: string;
+
   /** Current search value bound from the parent. */
   @Input() value = '';
 
@@ -20,7 +23,7 @@ export class SearchBarComponent {
   @Input() disabled = false;
 
   /** Emits the current search value as a plain string. */
-  @Output() valueChange = new EventEmitter<string>();
+  @Output() readonly valueChange = new EventEmitter<string>();
 
   onInput(event: Event): void {
     const { value } = (event as CustomEvent<{ value?: string }>).detail;

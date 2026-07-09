@@ -1,5 +1,6 @@
-<section class="search-bar" [attr.aria-label]="placeholder">
+<section class="search-bar">
   <ion-searchbar
+    [attr.aria-label]="ariaLabel ?? placeholder"
     [placeholder]="placeholder"
     [value]="value"
     [debounce]="debounce"

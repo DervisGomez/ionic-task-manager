@@ -82,4 +82,24 @@
   --app-transition-base: 250ms ease;
 
   --app-transition-slow: 400ms ease;
+
+  /* ==========================================================================
+       Typography
+       ========================================================================== */
+
+  --app-font-size-xs: 0.75rem;
+  --app-font-size-sm: 0.875rem;
+  --app-font-size-md: 1rem;
+  --app-font-size-lg: 1.25rem;
+  --app-font-size-xl: 1.75rem;
+  --app-font-size-2xl: 2.5rem;
+
+  --app-font-weight-regular: 400;
+  --app-font-weight-medium: 500;
+  --app-font-weight-semibold: 600;
+  --app-font-weight-bold: 700;
+
+  --app-line-height-tight: 1.2;
+  --app-line-height-normal: 1.5;
+  --app-line-height-relaxed: 1.6;
 }

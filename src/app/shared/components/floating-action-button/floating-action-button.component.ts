@@ -25,7 +25,7 @@ export class FloatingActionButtonComponent {
   /**
    * Acción principal del FAB.
    */
-  @Output() action = new EventEmitter<void>();
+  @Output() readonly action = new EventEmitter<void>();
 
   onAction(): void {
     if (this.disabled) return;

@@ -37,4 +37,23 @@ describe('SearchBarComponent', () => {
 
     expect(emitSpy).toHaveBeenCalledWith('');
   });
+
+  it('should set aria-label from placeholder by default', () => {
+    component.placeholder = 'Buscar tareas...';
+    fixture.detectChanges();
+
+    const searchbar = fixture.nativeElement.querySelector('ion-searchbar') as HTMLElement;
+
+    expect(searchbar.getAttribute('aria-label')).toBe('Buscar tareas...');
+  });
+
+  it('should prefer ariaLabel over placeholder for aria-label', () => {
+    component.placeholder = 'Buscar tareas...';
+    component.ariaLabel = 'Buscar en el listado de tareas';
+    fixture.detectChanges();
+
+    const searchbar = fixture.nativeElement.querySelector('ion-searchbar') as HTMLElement;
+
+    expect(searchbar.getAttribute('aria-label')).toBe('Buscar en el listado de tareas');
+  });
 });
