@@ -1,12 +1,9 @@
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 
+import { CategoryViewModel } from '@features/categories/presentation/models/category.viewmodel';
+
 import { CreateTaskCommand } from '../../../domain/commands/create-task.command';
-import {
-  getSelectableTaskCategories,
-  getSelectableTaskCategoryIds,
-  SelectableTaskCategoryId,
-} from '../../../shared/catalogs/task-categories.catalog';
 import { TaskViewModel } from '../../models/task.viewmodel';
 
 @Component({
@@ -15,7 +12,7 @@ import { TaskViewModel } from '../../models/task.viewmodel';
   standalone: false,
 })
 export class TaskFormComponent implements OnChanges {
-  readonly categoryOptions = getSelectableTaskCategories();
+  @Input() categories: readonly CategoryViewModel[] = [];
 
   @Input() task?: TaskViewModel;
 
@@ -78,12 +75,12 @@ export class TaskFormComponent implements OnChanges {
     this.cancel.emit();
   }
 
-  selectCategory(categoryId: SelectableTaskCategoryId): void {
+  selectCategory(categoryId: string): void {
     this.form.controls.categoryId.setValue(categoryId);
     this.focusCategory(categoryId);
   }
 
-  onCategoryKeydown(event: KeyboardEvent, categoryId: SelectableTaskCategoryId): void {
+  onCategoryKeydown(event: KeyboardEvent, categoryId: string): void {
     if (event.key === ' ' || event.key === 'Enter') {
       event.preventDefault();
       this.selectCategory(categoryId);
@@ -96,7 +93,7 @@ export class TaskFormComponent implements OnChanges {
 
     event.preventDefault();
 
-    const options = getSelectableTaskCategoryIds();
+    const options = this.categories.map((category) => category.id);
     const currentIndex = options.indexOf(categoryId);
     let nextIndex = currentIndex;
 
@@ -171,11 +168,11 @@ export class TaskFormComponent implements OnChanges {
     return undefined;
   }
 
-  getCategoryChipId(categoryId: SelectableTaskCategoryId): string {
+  getCategoryChipId(categoryId: string): string {
     return `task-form-category-${categoryId}`;
   }
 
-  private focusCategory(categoryId: SelectableTaskCategoryId): void {
+  private focusCategory(categoryId: string): void {
     document.getElementById(this.getCategoryChipId(categoryId))?.focus();
   }
 }

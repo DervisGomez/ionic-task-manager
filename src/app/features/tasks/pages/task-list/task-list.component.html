@@ -4,6 +4,9 @@
       <app-page-header
         title="Gestor de tareas"
         subtitle="Organiza tu día y enfócate en lo importante."
+        actionIcon="pricetags-outline"
+        actionAriaLabel="Administrar categorías"
+        (action)="navigateToCategories()"
       ></app-page-header>
 
       <app-search-bar
@@ -14,7 +17,7 @@
       ></app-search-bar>
 
       <app-category-filter
-        [options]="categories"
+        [categories]="categories"
         [selected]="selectedCategory"
         (selectedChange)="onCategorySelected($event)"
       ></app-category-filter>
@@ -36,7 +39,7 @@
       </ng-container>
 
       <ul *ngIf="hasTasks" class="task-list__list" aria-label="Lista de tareas">
-        <li *ngFor="let task of filteredTasks; trackBy: trackByTaskId" class="task-list__item">
+        <li *ngFor="let task of enrichedTasks; trackBy: trackByTaskId" class="task-list__item">
           <app-task-card
             [task]="task"
             (toggleCompleted)="onToggleCompleted($event)"
@@ -65,6 +68,7 @@
     <ng-template>
       <ion-content class="task-list__modal-content">
         <app-task-form
+          [categories]="categories"
           [task]="editingTask ?? undefined"
           [submitButtonText]="editingTask ? 'Guardar' : 'Guardar tarea'"
           (submitTask)="onSubmitTask($event)"

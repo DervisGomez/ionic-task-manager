@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
   selector: 'app-page-header',
@@ -8,5 +8,26 @@ import { Component, Input } from '@angular/core';
 })
 export class PageHeaderComponent {
   @Input({ required: true }) title!: string;
+
   @Input() subtitle?: string;
+
+  @Input() actionIcon?: string;
+
+  @Input() actionAriaLabel?: string;
+
+  @Input() showBackButton = false;
+
+  @Input() backAriaLabel = 'Volver a tareas';
+
+  @Output() readonly action = new EventEmitter<void>();
+
+  @Output() readonly back = new EventEmitter<void>();
+
+  onActionClick(): void {
+    this.action.emit();
+  }
+
+  onBackClick(): void {
+    this.back.emit();
+  }
 }

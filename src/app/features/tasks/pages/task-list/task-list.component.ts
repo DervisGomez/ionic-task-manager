@@ -1,10 +1,15 @@
 import { Component, inject, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { AlertController } from '@ionic/angular';
 
+import { CategoryFacade } from '@features/categories/presentation/facades/category.facade';
+import { CategoryViewModel } from '@features/categories/presentation/models/category.viewmodel';
+
 import { CreateTaskCommand } from '../../domain/commands/create-task.command';
+import { TaskPresentationMapper } from '../../presentation/mappers/task-presentation.mapper';
 import { TaskFacade } from '../../presentation/facades/task.facade';
+import { EnrichedTaskViewModel } from '../../presentation/models/enriched-task.viewmodel';
 import { TaskViewModel } from '../../presentation/models/task.viewmodel';
-import { getTaskListFilterOptions } from '../../shared/catalogs/task-categories.catalog';
 
 @Component({
   selector: 'app-task-list',
@@ -13,8 +18,6 @@ import { getTaskListFilterOptions } from '../../shared/catalogs/task-categories.
   standalone: false,
 })
 export class TaskListComponent implements OnInit {
-  readonly categories = getTaskListFilterOptions();
-
   isCreateModalOpen = false;
 
   editingTask: TaskViewModel | null = null;
@@ -26,18 +29,25 @@ export class TaskListComponent implements OnInit {
   toastColor: 'success' | 'danger' = 'success';
 
   private readonly taskFacade = inject(TaskFacade);
+  private readonly categoryFacade = inject(CategoryFacade);
   private readonly alertController = inject(AlertController);
+  private readonly router = inject(Router);
 
   async ngOnInit(): Promise<void> {
     await this.taskFacade.loadTasks();
+    await this.categoryFacade.loadCategories();
   }
 
-  get filteredTasks(): readonly TaskViewModel[] {
-    return this.taskFacade.filteredTasks;
+  get categories(): readonly CategoryViewModel[] {
+    return this.categoryFacade.categories;
+  }
+
+  get enrichedTasks(): readonly EnrichedTaskViewModel[] {
+    return TaskPresentationMapper.toEnrichedViewModels(this.taskFacade.tasks, this.categories);
   }
 
   get hasTasks(): boolean {
-    return this.filteredTasks.length > 0;
+    return this.taskFacade.tasks.length > 0;
   }
 
   get searchTerm(): string {
@@ -48,7 +58,7 @@ export class TaskListComponent implements OnInit {
     return this.taskFacade.selectedCategory;
   }
 
-  trackByTaskId(_index: number, task: TaskViewModel): string {
+  trackByTaskId(_index: number, task: EnrichedTaskViewModel): string {
     return task.id;
   }
 
@@ -58,6 +68,10 @@ export class TaskListComponent implements OnInit {
 
   onSearchChanged(value: string): void {
     this.taskFacade.search(value);
+  }
+
+  navigateToCategories(): void {
+    void this.router.navigate(['/categories']);
   }
 
   openCreateModal(): void {
@@ -91,7 +105,7 @@ export class TaskListComponent implements OnInit {
   }
 
   onEditTask(id: string): void {
-    const task = this.filteredTasks.find((item) => item.id === id);
+    const task = this.taskFacade.tasks.find((item) => item.id === id);
     if (!task) return;
 
     this.editingTask = task;

@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { IonicModule } from '@ionic/angular';
 
 import { PageHeaderComponent } from './page-header.component';
 
@@ -9,6 +10,7 @@ describe('PageHeaderComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [PageHeaderComponent],
+      imports: [IonicModule.forRoot()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(PageHeaderComponent);
@@ -39,5 +41,48 @@ describe('PageHeaderComponent', () => {
     fixture.detectChanges();
 
     expect(fixture.nativeElement.querySelector('p')).toBeNull();
+  });
+
+  it('renderiza el botón de acción cuando se proporciona actionIcon', () => {
+    component.actionIcon = 'pricetags-outline';
+    component.actionAriaLabel = 'Administrar categorías';
+    fixture.detectChanges();
+
+    const actionButton = fixture.nativeElement.querySelector('.page-header__action') as HTMLElement;
+
+    expect(actionButton).toBeTruthy();
+    expect(actionButton.getAttribute('aria-label')).toBe('Administrar categorías');
+  });
+
+  it('emite action al pulsar el botón de acción', () => {
+    spyOn(component.action, 'emit');
+    component.actionIcon = 'pricetags-outline';
+    component.actionAriaLabel = 'Administrar categorías';
+    fixture.detectChanges();
+
+    component.onActionClick();
+
+    expect(component.action.emit).toHaveBeenCalled();
+  });
+
+  it('renderiza el botón de regreso cuando showBackButton es true', () => {
+    component.showBackButton = true;
+    component.backAriaLabel = 'Volver a tareas';
+    fixture.detectChanges();
+
+    const backButton = fixture.nativeElement.querySelector('.page-header__back') as HTMLElement;
+
+    expect(backButton).toBeTruthy();
+    expect(backButton.getAttribute('aria-label')).toBe('Volver a tareas');
+  });
+
+  it('emite back al pulsar el botón de regreso', () => {
+    spyOn(component.back, 'emit');
+    component.showBackButton = true;
+    fixture.detectChanges();
+
+    component.onBackClick();
+
+    expect(component.back.emit).toHaveBeenCalled();
   });
 });

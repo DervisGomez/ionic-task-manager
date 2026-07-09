@@ -9,10 +9,11 @@ import { TaskFormComponent } from './presentation/components/task-form/task-form
 import { TaskCardComponent } from './presentation/components/task-card/task-card.component';
 import { SharedModule } from '@shared/shared.module';
 import { TASKS_PROVIDERS } from './tasks.providers';
+import { CATEGORIES_PROVIDERS } from '@features/categories/categories.providers';
 
 @NgModule({
   declarations: [TaskListComponent, TaskFormComponent, TaskCardComponent],
   imports: [CommonModule, ReactiveFormsModule, IonicModule, TasksRoutingModule, SharedModule],
-  providers: [...TASKS_PROVIDERS],
+  providers: [...TASKS_PROVIDERS, ...CATEGORIES_PROVIDERS],
 })
 export class TasksModule {}

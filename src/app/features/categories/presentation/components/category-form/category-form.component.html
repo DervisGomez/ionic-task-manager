@@ -1,0 +1,47 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="category-form" novalidate>
+  <header class="category-form__header">
+    <h2 class="category-form__title" id="category-form-modal-title">{{ headerTitle }}</h2>
+    <p class="category-form__subtitle" id="category-form-modal-description">
+      {{ headerDescription }}
+    </p>
+  </header>
+
+  <div class="category-form__body">
+    <section class="category-form__section" aria-labelledby="category-form-name-label">
+      <div
+        class="category-form__field"
+        [class.category-form__field--invalid]="!!getFieldError('name')"
+      >
+        <label class="category-form__label" id="category-form-name-label" for="category-name-input">
+          Nombre
+          <span class="visually-hidden">(obligatorio)</span>
+        </label>
+        <ion-input
+          id="category-name-input"
+          class="category-form__input category-form__input--name"
+          formControlName="name"
+          placeholder="Ej. Trabajo"
+          [attr.aria-required]="true"
+          [attr.aria-invalid]="getFieldError('name') ? true : null"
+          [attr.aria-describedby]="getFieldError('name') ? 'category-name-error' : null"
+          autocomplete="off"
+        ></ion-input>
+        <p
+          class="category-form__error"
+          id="category-name-error"
+          *ngIf="getFieldError('name')"
+          role="alert"
+        >
+          {{ getFieldError('name') }}
+        </p>
+      </div>
+    </section>
+  </div>
+
+  <footer class="category-form__actions">
+    <ion-button type="button" fill="outline" color="medium" (click)="onCancel()">
+      Cancelar
+    </ion-button>
+    <ion-button type="submit" class="category-form__submit">{{ submitButtonText }}</ion-button>
+  </footer>
+</form>

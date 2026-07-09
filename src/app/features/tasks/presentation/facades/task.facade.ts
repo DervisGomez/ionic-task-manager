@@ -30,8 +30,8 @@ export class TaskFacade {
     error: null,
   };
 
-  /** Listado de tareas filtradas mostradas en la UI. */
-  get filteredTasks(): readonly TaskViewModel[] {
+  /** Listado de tareas filtradas del agregado Task. */
+  get tasks(): readonly TaskViewModel[] {
     return TaskMapper.toViewModels(this.state.filteredTasks);
   }
 

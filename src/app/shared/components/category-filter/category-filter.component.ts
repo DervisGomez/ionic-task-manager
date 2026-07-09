@@ -10,9 +10,10 @@ import { FilterOption } from '../../models/filter-option.model';
 })
 export class CategoryFilterComponent {
   /**
-   * Opciones disponibles para el filtro.
+   * Categorías disponibles para el filtro.
    */
-  @Input({ required: true }) options: readonly FilterOption[] = [];
+  @Input({ required: true }) categories: readonly { readonly id: string; readonly name: string }[] =
+    [];
 
   /**
    * Id seleccionado actualmente.
@@ -32,6 +33,16 @@ export class CategoryFilterComponent {
     'Home',
     'End',
   ] as const;
+
+  /**
+   * Opciones de filtro derivadas de las categorías recibidas.
+   */
+  get options(): readonly FilterOption[] {
+    return [
+      { id: 'all', label: 'Todas' },
+      ...this.categories.map(({ id, name }) => ({ id, label: name })),
+    ];
+  }
 
   /**
    * Selecciona el id y emite su valor únicamente si cambia la selección.

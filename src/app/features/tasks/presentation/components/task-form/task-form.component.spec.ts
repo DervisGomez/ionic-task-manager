@@ -15,11 +15,13 @@ describe('TaskFormComponent', () => {
     title: 'Planificar sprint',
     description: 'Definir alcance',
     categoryId: 'work',
-    categoryLabel: 'Trabajo',
     completed: false,
-    statusLabel: 'Pendiente',
-    statusColor: 'medium',
   };
+
+  const categories = [
+    { id: 'work', name: 'Trabajo' },
+    { id: 'personal', name: 'Personal' },
+  ];
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -29,6 +31,7 @@ describe('TaskFormComponent', () => {
 
     fixture = TestBed.createComponent(TaskFormComponent);
     component = fixture.componentInstance;
+    component.categories = categories;
     fixture.detectChanges();
   });
 

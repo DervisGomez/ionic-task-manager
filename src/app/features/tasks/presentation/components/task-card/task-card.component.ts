@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 
-import { TaskViewModel } from '../../models/task.viewmodel';
+import { EnrichedTaskViewModel } from '../../models/enriched-task.viewmodel';
 
 const DESCRIPTION_TOGGLE_THRESHOLD = 85;
 
@@ -10,7 +10,7 @@ const DESCRIPTION_TOGGLE_THRESHOLD = 85;
   standalone: false,
 })
 export class TaskCardComponent implements OnChanges {
-  @Input({ required: true }) task!: TaskViewModel;
+  @Input({ required: true }) task!: EnrichedTaskViewModel;
 
   isDescriptionExpanded = false;
 

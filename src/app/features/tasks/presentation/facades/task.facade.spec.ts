@@ -103,7 +103,7 @@ describe('TaskFacade', () => {
 
     facade.search('');
 
-    expect(facade.filteredTasks).toHaveSize(2);
+    expect(facade.tasks).toHaveSize(2);
   });
 
   it('búsqueda por título filtra las tareas', async () => {
@@ -111,8 +111,8 @@ describe('TaskFacade', () => {
 
     facade.search('pan');
 
-    expect(facade.filteredTasks).toHaveSize(1);
-    expect(facade.filteredTasks[0].title).toBe('Comprar pan');
+    expect(facade.tasks).toHaveSize(1);
+    expect(facade.tasks[0].title).toBe('Comprar pan');
   });
 
   it('búsqueda por descripción filtra las tareas', async () => {
@@ -120,8 +120,8 @@ describe('TaskFacade', () => {
 
     facade.search('urgente');
 
-    expect(facade.filteredTasks).toHaveSize(1);
-    expect(facade.filteredTasks[0].title).toBe('Comprar pan');
+    expect(facade.tasks).toHaveSize(1);
+    expect(facade.tasks[0].title).toBe('Comprar pan');
   });
 
   it('búsqueda sin resultados devuelve un listado vacío', async () => {
@@ -129,7 +129,7 @@ describe('TaskFacade', () => {
 
     facade.search('inexistente');
 
-    expect(facade.filteredTasks).toHaveSize(0);
+    expect(facade.tasks).toHaveSize(0);
   });
 
   it('categoría "all" devuelve todas las tareas', async () => {
@@ -137,7 +137,7 @@ describe('TaskFacade', () => {
 
     facade.selectCategory('all');
 
-    expect(facade.filteredTasks).toHaveSize(2);
+    expect(facade.tasks).toHaveSize(2);
   });
 
   it('categoría específica devuelve únicamente esa categoría', async () => {
@@ -145,8 +145,8 @@ describe('TaskFacade', () => {
 
     facade.selectCategory('work');
 
-    expect(facade.filteredTasks).toHaveSize(1);
-    expect(facade.filteredTasks[0].categoryId).toBe('work');
+    expect(facade.tasks).toHaveSize(1);
+    expect(facade.tasks[0].categoryId).toBe('work');
   });
 
   it('búsqueda y categoría funcionan simultáneamente', async () => {
@@ -155,9 +155,9 @@ describe('TaskFacade', () => {
     facade.selectCategory('personal');
     facade.search('urgente');
 
-    expect(facade.filteredTasks).toHaveSize(1);
-    expect(facade.filteredTasks[0].title).toBe('Comprar pan');
-    expect(facade.filteredTasks[0].categoryId).toBe('personal');
+    expect(facade.tasks).toHaveSize(1);
+    expect(facade.tasks[0].title).toBe('Comprar pan');
+    expect(facade.tasks[0].categoryId).toBe('personal');
   });
 
   it('updateTask llama UpdateTaskUseCase', async () => {

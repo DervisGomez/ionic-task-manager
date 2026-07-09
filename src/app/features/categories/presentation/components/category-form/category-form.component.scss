@@ -1,0 +1,174 @@
+.category-form {
+  --category-form-field-transition:
+    border-color var(--app-transition-interactive), box-shadow var(--app-transition-interactive);
+  width: 100%;
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--app-spacing-2xl);
+  background: var(--app-color-surface);
+}
+
+.category-form__header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--app-spacing-sm);
+  padding-bottom: var(--app-spacing-lg);
+  border-bottom: 1px solid var(--app-color-border);
+}
+
+.category-form__title,
+.category-form__subtitle,
+.category-form__error {
+  margin: 0;
+}
+
+.category-form__title {
+  font-size: var(--app-text-title-section);
+  font-weight: var(--app-font-weight-semibold);
+  line-height: var(--app-line-height-tight);
+  color: var(--app-color-text-primary);
+}
+
+.category-form__subtitle {
+  font-size: var(--app-text-body-sm);
+  line-height: var(--app-line-height-relaxed);
+  color: var(--app-color-text-secondary);
+}
+
+.category-form__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--app-spacing-xl);
+}
+
+.category-form__section,
+.category-form__field {
+  min-width: 0;
+}
+
+.category-form__field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--app-spacing-sm);
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.category-form__label {
+  font-size: var(--app-text-label);
+  font-weight: var(--app-font-weight-semibold);
+  line-height: var(--app-line-height-tight);
+  color: var(--app-color-text-primary);
+}
+
+.category-form__error {
+  font-size: var(--app-text-caption);
+  line-height: var(--app-line-height-normal);
+  font-weight: var(--app-font-weight-medium);
+  color: var(--app-color-text-error);
+}
+
+.category-form__input {
+  width: 100%;
+  min-height: var(--app-size-input-min-height);
+  --background: var(--app-color-surface);
+  --color: var(--app-color-text-primary);
+  --highlight-color-focused: transparent;
+  --highlight-color-valid: transparent;
+  --highlight-color-invalid: transparent;
+  --highlight-height: 0;
+  --placeholder-color: var(--app-color-text-placeholder);
+  --placeholder-opacity: 1;
+  --padding-start: var(--app-spacing-md);
+  --padding-end: var(--app-spacing-md);
+  --border-radius: var(--app-radius-lg);
+  border: 1px solid var(--app-color-border);
+  border-radius: var(--app-radius-lg);
+  transition: var(--category-form-field-transition);
+
+  &:focus-within {
+    border-color: color-mix(in srgb, var(--ion-color-primary) 40%, var(--app-color-border));
+    box-shadow: var(--app-shadow-focus);
+  }
+}
+
+.category-form__input--name {
+  font-size: var(--app-text-body);
+  font-weight: var(--app-font-weight-medium);
+
+  @media (min-width: 768px) {
+    font-size: var(--app-text-title-section);
+  }
+}
+
+.category-form__actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: var(--app-spacing-md);
+  padding-top: var(--app-spacing-lg);
+  border-top: 1px solid var(--app-color-border);
+
+  ion-button {
+    flex: 0 0 auto;
+    margin: 0;
+    min-height: var(--app-size-touch-target);
+    min-width: calc(var(--app-spacing-3xl) * 2);
+    font-size: var(--app-text-label);
+    font-weight: var(--app-font-weight-semibold);
+  }
+}
+
+.category-form__submit {
+  --box-shadow: var(--app-shadow-sm);
+  transition: box-shadow var(--app-transition-interactive);
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      --box-shadow: var(--app-shadow-md);
+    }
+  }
+}
+
+.category-form__field--invalid {
+  --category-form-invalid-border: color-mix(
+    in srgb,
+    var(--ion-color-danger) 55%,
+    var(--app-color-border)
+  );
+
+  .category-form__input {
+    border-color: var(--category-form-invalid-border);
+
+    &:focus-within {
+      border-color: var(--ion-color-danger);
+      box-shadow: var(--app-shadow-focus-danger);
+    }
+  }
+}
+
+@media (min-width: 768px) {
+  .category-form {
+    max-width: calc(var(--app-spacing-3xl) * 12);
+  }
+
+  .category-form__header {
+    padding-bottom: var(--app-spacing-xl);
+  }
+
+  .category-form__title {
+    font-size: var(--app-text-title-page);
+  }
+
+  .category-form__actions ion-button {
+    min-width: calc(var(--app-spacing-3xl) * 2.5);
+  }
+}
+
+@media (min-width: 1024px) {
+  .category-form {
+    max-width: calc(var(--app-spacing-3xl) * 14);
+  }
+}

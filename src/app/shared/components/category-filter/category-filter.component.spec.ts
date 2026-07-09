@@ -2,16 +2,14 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 
 import { CategoryFilterComponent } from './category-filter.component';
-import { FilterOption } from '../../models/filter-option.model';
 
 describe('CategoryFilterComponent', () => {
   let component: CategoryFilterComponent;
   let fixture: ComponentFixture<CategoryFilterComponent>;
 
-  const options: readonly FilterOption[] = [
-    { id: 'all', label: 'Todas' },
-    { id: 'work', label: 'Trabajo' },
-    { id: 'personal', label: 'Personal' },
+  const categories = [
+    { id: 'work', name: 'Trabajo' },
+    { id: 'personal', name: 'Personal' },
   ];
 
   beforeEach(waitForAsync(() => {
@@ -22,7 +20,7 @@ describe('CategoryFilterComponent', () => {
 
     fixture = TestBed.createComponent(CategoryFilterComponent);
     component = fixture.componentInstance;
-    component.options = options;
+    component.categories = categories;
     component.selected = 'all';
     fixture.detectChanges();
   }));

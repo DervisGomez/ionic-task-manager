@@ -2,14 +2,14 @@ import { ComponentFixture, fakeAsync, flush, TestBed } from '@angular/core/testi
 import { By } from '@angular/platform-browser';
 import { IonicModule } from '@ionic/angular';
 
-import { TaskViewModel } from '../../models/task.viewmodel';
+import { EnrichedTaskViewModel } from '../../models/enriched-task.viewmodel';
 import { TaskCardComponent } from './task-card.component';
 
 describe('TaskCardComponent', () => {
   let component: TaskCardComponent;
   let fixture: ComponentFixture<TaskCardComponent>;
 
-  const task: TaskViewModel = {
+  const task: EnrichedTaskViewModel = {
     id: 'task-1',
     title: 'Planificar sprint',
     description: 'Definir alcance y riesgos',

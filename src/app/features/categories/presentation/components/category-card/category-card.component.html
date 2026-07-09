@@ -1,0 +1,31 @@
+<ion-card class="category-card" [attr.aria-labelledby]="'category-title-' + category.id">
+  <ion-card-content class="category-card__content">
+    <div class="category-card__header">
+      <h3 class="category-card__title" [id]="'category-title-' + category.id">
+        {{ category.name }}
+      </h3>
+
+      <div class="category-card__actions">
+        <ion-button
+          fill="clear"
+          size="small"
+          shape="round"
+          [attr.aria-label]="editAriaLabel"
+          (click)="onEdit()"
+        >
+          <ion-icon name="create-outline" aria-hidden="true"></ion-icon>
+        </ion-button>
+        <ion-button
+          fill="clear"
+          size="small"
+          shape="round"
+          color="danger"
+          [attr.aria-label]="deleteAriaLabel"
+          (click)="onDelete()"
+        >
+          <ion-icon name="trash-outline" aria-hidden="true"></ion-icon>
+        </ion-button>
+      </div>
+    </div>
+  </ion-card-content>
+</ion-card>

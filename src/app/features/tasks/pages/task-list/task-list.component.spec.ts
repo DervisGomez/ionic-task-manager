@@ -1,8 +1,11 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { AlertController, AlertButton, IonicModule } from '@ionic/angular';
 
 import { SharedModule } from '@shared/shared.module';
+
+import { CategoryFacade } from '@features/categories/presentation/facades/category.facade';
 
 import { CreateTaskCommand } from '../../domain/commands/create-task.command';
 import { TaskCardComponent } from '../../presentation/components/task-card/task-card.component';
@@ -15,8 +18,10 @@ describe('TaskListComponent', () => {
   let component: TaskListComponent;
   let fixture: ComponentFixture<TaskListComponent>;
   let taskFacadeSpy: jasmine.SpyObj<TaskFacade>;
+  let categoryFacadeSpy: jasmine.SpyObj<CategoryFacade>;
   let alertControllerSpy: jasmine.SpyObj<AlertController>;
   let alertElementSpy: jasmine.SpyObj<HTMLIonAlertElement>;
+  let routerSpy: jasmine.SpyObj<Router>;
   let alertConfig: Parameters<AlertController['create']>[0];
 
   const editingTask: TaskViewModel = {
@@ -24,11 +29,13 @@ describe('TaskListComponent', () => {
     title: 'Planificar sprint',
     description: 'Definir alcance',
     categoryId: 'work',
-    categoryLabel: 'Trabajo',
     completed: false,
-    statusLabel: 'Pendiente',
-    statusColor: 'medium',
   };
+
+  const categories = [
+    { id: 'work', name: 'Trabajo' },
+    { id: 'personal', name: 'Personal' },
+  ];
 
   beforeEach(waitForAsync(() => {
     taskFacadeSpy = jasmine.createSpyObj<TaskFacade>(
@@ -43,7 +50,7 @@ describe('TaskListComponent', () => {
         'selectCategory',
       ],
       {
-        filteredTasks: [],
+        tasks: [],
         searchTerm: '',
         selectedCategory: 'all',
         loading: false,
@@ -56,6 +63,13 @@ describe('TaskListComponent', () => {
     taskFacadeSpy.toggleCompleted.and.resolveTo();
     taskFacadeSpy.deleteTask.and.resolveTo();
 
+    categoryFacadeSpy = jasmine.createSpyObj<CategoryFacade>('CategoryFacade', ['loadCategories'], {
+      categories,
+      loading: false,
+      error: null,
+    });
+    categoryFacadeSpy.loadCategories.and.resolveTo();
+
     alertElementSpy = jasmine.createSpyObj<HTMLIonAlertElement>('HTMLIonAlertElement', ['present']);
     alertElementSpy.present.and.resolveTo();
 
@@ -65,12 +79,17 @@ describe('TaskListComponent', () => {
       return alertElementSpy;
     });
 
+    routerSpy = jasmine.createSpyObj<Router>('Router', ['navigate']);
+    routerSpy.navigate.and.resolveTo(true);
+
     TestBed.configureTestingModule({
       declarations: [TaskListComponent, TaskFormComponent, TaskCardComponent],
       imports: [ReactiveFormsModule, IonicModule.forRoot(), SharedModule],
       providers: [
         { provide: TaskFacade, useValue: taskFacadeSpy },
+        { provide: CategoryFacade, useValue: categoryFacadeSpy },
         { provide: AlertController, useValue: alertControllerSpy },
+        { provide: Router, useValue: routerSpy },
       ],
     }).compileComponents();
 
@@ -81,6 +100,25 @@ describe('TaskListComponent', () => {
 
   it('debe crear el componente', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('ngOnInit carga tareas y categorías', () => {
+    expect(taskFacadeSpy.loadTasks).toHaveBeenCalledTimes(1);
+    expect(categoryFacadeSpy.loadCategories).toHaveBeenCalledTimes(1);
+  });
+
+  it('renderiza el botón para administrar categorías', () => {
+    const actionButton = fixture.nativeElement.querySelector(
+      'app-page-header .page-header__action',
+    ) as HTMLElement;
+
+    expect(actionButton).toBeTruthy();
+  });
+
+  it('navega a /categories al pulsar administrar categorías', () => {
+    component.navigateToCategories();
+
+    expect(routerSpy.navigate).toHaveBeenCalledOnceWith(['/categories']);
   });
 
   it('onCategorySelected delega en TaskFacade.selectCategory', () => {
@@ -126,7 +164,7 @@ describe('TaskListComponent', () => {
   });
 
   it('muestra el FAB cuando hay tareas', () => {
-    Object.defineProperty(taskFacadeSpy, 'filteredTasks', {
+    Object.defineProperty(taskFacadeSpy, 'tasks', {
       get: () => [editingTask],
     });
     fixture.detectChanges();
@@ -159,7 +197,7 @@ describe('TaskListComponent', () => {
   });
 
   it('debe abrir el modal de edición', () => {
-    Object.defineProperty(taskFacadeSpy, 'filteredTasks', {
+    Object.defineProperty(taskFacadeSpy, 'tasks', {
       get: () => [editingTask],
     });
 
@@ -280,7 +318,7 @@ describe('TaskListComponent', () => {
   });
 
   it('expone semántica de lista accesible cuando hay tareas', () => {
-    Object.defineProperty(taskFacadeSpy, 'filteredTasks', {
+    Object.defineProperty(taskFacadeSpy, 'tasks', {
       get: () => [editingTask],
     });
     fixture.detectChanges();

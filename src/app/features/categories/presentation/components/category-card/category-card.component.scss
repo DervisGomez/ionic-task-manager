@@ -1,0 +1,99 @@
+app-category-card {
+  display: block;
+  width: 100%;
+}
+
+.category-card {
+  position: relative;
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid var(--app-color-border);
+  border-radius: var(--app-radius-lg);
+  background: var(--app-color-surface);
+  box-shadow: var(--app-shadow-sm);
+  transition:
+    transform var(--app-transition-interactive),
+    box-shadow var(--app-transition-interactive),
+    border-color var(--app-transition-interactive);
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: var(--app-radius-xs);
+    background: color-mix(in srgb, var(--ion-color-primary) 55%, var(--app-color-border));
+    opacity: 0.85;
+    transition: opacity var(--app-transition-interactive);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      border-color: color-mix(in srgb, var(--app-color-border) 45%, var(--ion-color-primary));
+      box-shadow: var(--app-shadow-md);
+      transform: translateY(calc(var(--app-spacing-xs) * -0.25));
+
+      &::before {
+        opacity: 1;
+      }
+
+      .category-card__actions {
+        opacity: 1;
+      }
+    }
+  }
+}
+
+.category-card__content {
+  padding: var(--app-spacing-md);
+  padding-inline-start: calc(var(--app-spacing-md) + var(--app-radius-xs));
+}
+
+.category-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--app-spacing-sm);
+  min-width: 0;
+}
+
+.category-card__title {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
+  font-size: var(--app-text-body);
+  font-weight: var(--app-font-weight-semibold);
+  line-height: var(--app-line-height-tight);
+  color: var(--app-color-text-primary);
+}
+
+.category-card__actions {
+  display: flex;
+  flex-shrink: 0;
+  margin: calc(var(--app-spacing-xs) * -1) 0 0;
+  transition: opacity var(--app-transition-interactive);
+
+  @media (hover: hover) and (pointer: fine) {
+    opacity: 0.45;
+  }
+
+  ion-button {
+    margin: 0;
+    --padding-start: var(--app-spacing-xs);
+    --padding-end: var(--app-spacing-xs);
+
+    ion-icon {
+      font-size: var(--app-text-body);
+    }
+  }
+}
+
+@media (min-width: 768px) {
+  .category-card__content {
+    padding: var(--app-spacing-lg);
+    padding-inline-start: calc(var(--app-spacing-lg) + var(--app-radius-xs));
+  }
+
+  .category-card__title {
+    font-size: var(--app-text-title-section);
+  }
+}

@@ -98,7 +98,7 @@
           [attr.aria-describedby]="categoryDescribedBy"
         >
           <button
-            *ngFor="let category of categoryOptions"
+            *ngFor="let category of categories"
             type="button"
             class="task-form__category-chip"
             [id]="getCategoryChipId(category.id)"
@@ -111,7 +111,7 @@
             (click)="selectCategory(category.id)"
             (keydown)="onCategoryKeydown($event, category.id)"
           >
-            {{ category.label }}
+            {{ category.name }}
           </button>
         </div>
         <p

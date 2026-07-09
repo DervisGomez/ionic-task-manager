@@ -1,22 +1,17 @@
 import { Task } from '../../domain/entities/task.model';
-import { getTaskCategoryLabel } from '../../shared/catalogs/task-categories.catalog';
 import { TaskViewModel } from '../models/task.viewmodel';
 
+/**
+ * Transforma entidades de dominio del agregado Task en modelos de vista.
+ */
 export class TaskMapper {
   static toViewModel(task: Task): TaskViewModel {
-    const categoryLabel = getTaskCategoryLabel(task.categoryId);
-    const statusLabel = task.completed ? 'Completada' : 'Pendiente';
-    const statusColor = task.completed ? 'success' : 'medium';
-
     return {
       id: task.id,
       title: task.title,
       description: task.description ?? '',
-      categoryId: task.categoryId,
-      categoryLabel,
       completed: task.completed,
-      statusLabel,
-      statusColor,
+      categoryId: task.categoryId,
     };
   }
 
