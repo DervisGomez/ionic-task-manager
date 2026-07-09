@@ -6,23 +6,12 @@
       </h3>
 
       <div class="category-card__actions">
-        <ion-button
-          fill="clear"
-          size="small"
-          shape="round"
-          [attr.aria-label]="editAriaLabel"
-          (click)="onEdit()"
-        >
+        <ion-button fill="clear" size="small" shape="round" (click)="onEdit()">
+          <span class="visually-hidden">{{ editAriaLabel }}</span>
           <ion-icon name="create-outline" aria-hidden="true"></ion-icon>
         </ion-button>
-        <ion-button
-          fill="clear"
-          size="small"
-          shape="round"
-          color="danger"
-          [attr.aria-label]="deleteAriaLabel"
-          (click)="onDelete()"
-        >
+        <ion-button fill="clear" size="small" shape="round" color="danger" (click)="onDelete()">
+          <span class="visually-hidden">{{ deleteAriaLabel }}</span>
           <ion-icon name="trash-outline" aria-hidden="true"></ion-icon>
         </ion-button>
       </div>

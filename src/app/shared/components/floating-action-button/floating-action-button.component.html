@@ -1,10 +1,6 @@
 <ion-fab slot="fixed" vertical="bottom" horizontal="end">
-  <ion-fab-button
-    color="primary"
-    [attr.aria-label]="ariaLabel"
-    [disabled]="disabled"
-    (click)="onAction()"
-  >
+  <ion-fab-button color="primary" [disabled]="disabled" (click)="onAction()">
+    <span class="visually-hidden">{{ ariaLabel }}</span>
     <ion-icon [name]="icon" aria-hidden="true"></ion-icon>
   </ion-fab-button>
 </ion-fab>

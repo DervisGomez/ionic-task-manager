@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AlertController, AlertButton, IonicModule } from '@ionic/angular';
@@ -31,7 +31,7 @@ describe('CategoryListComponent', () => {
     { id: 'personal', name: 'Personal' },
   ];
 
-  beforeEach(waitForAsync(() => {
+  beforeEach(async () => {
     categoryFacadeSpy = jasmine.createSpyObj<CategoryFacade>(
       'CategoryFacade',
       ['loadCategories', 'createCategory', 'updateCategory', 'deleteCategory'],
@@ -71,14 +71,21 @@ describe('CategoryListComponent', () => {
     fixture = TestBed.createComponent(CategoryListComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
-  }));
+    await component.ionViewWillEnter();
+  });
 
   it('debe crear el componente', () => {
     expect(component).toBeTruthy();
   });
 
-  it('ngOnInit ejecuta loadCategories', () => {
+  it('ionViewWillEnter ejecuta loadCategories', () => {
     expect(categoryFacadeSpy.loadCategories).toHaveBeenCalledTimes(1);
+  });
+
+  it('ionViewWillEnter recarga categorías al volver a la pantalla', async () => {
+    await component.ionViewWillEnter();
+
+    expect(categoryFacadeSpy.loadCategories).toHaveBeenCalledTimes(2);
   });
 
   it('renderiza el botón de regreso a tareas', () => {

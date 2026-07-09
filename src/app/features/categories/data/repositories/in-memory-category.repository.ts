@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 
+import { LocalStorageCategoryDataSource } from '@features/categories/data/datasources/local-storage-category.datasource';
 import { Category } from '@features/categories/domain/entities/category.model';
 import { CategoryRepository } from '@features/categories/domain/repositories/category.repository';
 import { CATEGORY_CATALOG_SEED } from '@features/categories/shared/catalogs/category.catalog';
@@ -12,17 +13,12 @@ import { CATEGORY_CATALOG_SEED } from '@features/categories/shared/catalogs/cate
  */
 @Injectable()
 export class InMemoryCategoryRepository extends CategoryRepository {
+  private readonly dataSource = new LocalStorageCategoryDataSource();
   private categories: Category[];
 
   constructor() {
     super();
-    const now = new Date();
-    this.categories = CATEGORY_CATALOG_SEED.map((seed) => ({
-      id: seed.id,
-      name: seed.name,
-      createdAt: now,
-      updatedAt: now,
-    }));
+    this.categories = this.initializeFromStorage();
   }
 
   /**
@@ -50,6 +46,7 @@ export class InMemoryCategoryRepository extends CategoryRepository {
    */
   override async createCategory(category: Category): Promise<void> {
     this.categories.push({ ...category });
+    this.persist();
   }
 
   /**
@@ -62,6 +59,7 @@ export class InMemoryCategoryRepository extends CategoryRepository {
     if (index === -1) return;
 
     this.categories[index] = { ...category };
+    this.persist();
   }
 
   /**
@@ -70,5 +68,31 @@ export class InMemoryCategoryRepository extends CategoryRepository {
    */
   override async deleteCategory(id: string): Promise<void> {
     this.categories = this.categories.filter((c) => c.id !== id);
+    this.persist();
+  }
+
+  private initializeFromStorage(): Category[] {
+    const loaded = this.dataSource.load();
+    if (loaded !== null) {
+      return loaded.map((category) => ({ ...category }));
+    }
+
+    const seed = this.createSeedCategories();
+    this.dataSource.save(seed);
+    return seed;
+  }
+
+  private createSeedCategories(): Category[] {
+    const now = new Date();
+    return CATEGORY_CATALOG_SEED.map((seed) => ({
+      id: seed.id,
+      name: seed.name,
+      createdAt: now,
+      updatedAt: now,
+    }));
+  }
+
+  private persist(): void {
+    this.dataSource.save(this.categories);
   }
 }

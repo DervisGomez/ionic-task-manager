@@ -1,6 +1,6 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { AlertController } from '@ionic/angular';
+import { AlertController, ViewWillEnter } from '@ionic/angular';
 
 import { CreateCategoryCommand } from '../../domain/commands/create-category.command';
 import { CategoryFacade } from '../../presentation/facades/category.facade';
@@ -12,7 +12,7 @@ import { CategoryViewModel } from '../../presentation/models/category.viewmodel'
   styleUrls: ['./category-list.component.scss'],
   standalone: false,
 })
-export class CategoryListComponent implements OnInit {
+export class CategoryListComponent implements ViewWillEnter {
   isCreateModalOpen = false;
 
   editingCategory: CategoryViewModel | null = null;
@@ -27,7 +27,7 @@ export class CategoryListComponent implements OnInit {
   private readonly alertController = inject(AlertController);
   private readonly router = inject(Router);
 
-  async ngOnInit(): Promise<void> {
+  async ionViewWillEnter(): Promise<void> {
     await this.categoryFacade.loadCategories();
   }
 

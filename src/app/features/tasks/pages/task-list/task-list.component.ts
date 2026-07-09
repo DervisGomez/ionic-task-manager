@@ -1,6 +1,6 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { AlertController } from '@ionic/angular';
+import { AlertController, ViewWillEnter } from '@ionic/angular';
 
 import { CategoryFacade } from '@features/categories/presentation/facades/category.facade';
 import { CategoryViewModel } from '@features/categories/presentation/models/category.viewmodel';
@@ -17,7 +17,7 @@ import { TaskViewModel } from '../../presentation/models/task.viewmodel';
   styleUrls: ['./task-list.component.scss'],
   standalone: false,
 })
-export class TaskListComponent implements OnInit {
+export class TaskListComponent implements ViewWillEnter {
   isCreateModalOpen = false;
 
   editingTask: TaskViewModel | null = null;
@@ -33,7 +33,7 @@ export class TaskListComponent implements OnInit {
   private readonly alertController = inject(AlertController);
   private readonly router = inject(Router);
 
-  async ngOnInit(): Promise<void> {
+  async ionViewWillEnter(): Promise<void> {
     await this.taskFacade.loadTasks();
     await this.categoryFacade.loadCategories();
   }

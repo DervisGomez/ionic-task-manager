@@ -49,9 +49,10 @@ describe('PageHeaderComponent', () => {
     fixture.detectChanges();
 
     const actionButton = fixture.nativeElement.querySelector('.page-header__action') as HTMLElement;
+    const accessibleLabel = actionButton.querySelector('.visually-hidden') as HTMLElement;
 
     expect(actionButton).toBeTruthy();
-    expect(actionButton.getAttribute('aria-label')).toBe('Administrar categorías');
+    expect(accessibleLabel?.textContent).toBe('Administrar categorías');
   });
 
   it('emite action al pulsar el botón de acción', () => {
@@ -71,9 +72,10 @@ describe('PageHeaderComponent', () => {
     fixture.detectChanges();
 
     const backButton = fixture.nativeElement.querySelector('.page-header__back') as HTMLElement;
+    const accessibleLabel = backButton.querySelector('.visually-hidden') as HTMLElement;
 
     expect(backButton).toBeTruthy();
-    expect(backButton.getAttribute('aria-label')).toBe('Volver a tareas');
+    expect(accessibleLabel?.textContent).toBe('Volver a tareas');
   });
 
   it('emite back al pulsar el botón de regreso', () => {

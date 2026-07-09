@@ -7,9 +7,9 @@
         size="small"
         shape="round"
         type="button"
-        [attr.aria-label]="backAriaLabel"
         (click)="onBackClick()"
       >
+        <span class="visually-hidden">{{ backAriaLabel }}</span>
         <ion-icon name="chevron-back-outline" aria-hidden="true"></ion-icon>
       </ion-button>
     }
@@ -28,9 +28,11 @@
         size="small"
         shape="round"
         type="button"
-        [attr.aria-label]="actionAriaLabel"
         (click)="onActionClick()"
       >
+        @if (actionAriaLabel) {
+          <span class="visually-hidden">{{ actionAriaLabel }}</span>
+        }
         <ion-icon [name]="actionIcon" aria-hidden="true"></ion-icon>
       </ion-button>
     }

@@ -6,6 +6,7 @@ describe('InMemoryTaskRepository', () => {
   let repository: InMemoryTaskRepository;
 
   beforeEach(() => {
+    localStorage.clear();
     repository = new InMemoryTaskRepository();
   });
 
@@ -120,6 +121,57 @@ describe('InMemoryTaskRepository', () => {
 
     const found = await repository.getTaskById('t1');
     expect(found).toEqual(updated);
+  });
+
+  it('debe persistir el seed vacío al inicializar sin datos', () => {
+    expect(localStorage.getItem('task-manager.tasks')).toBe('[]');
+  });
+
+  it('debe recuperar tareas persistidas al reinicializar', async () => {
+    const task: Task = {
+      id: 't1',
+      title: 'Task 1',
+      completed: false,
+      categoryId: 'c1',
+      createdAt: new Date('2026-01-01T00:00:00.000Z'),
+      updatedAt: new Date('2026-01-01T00:00:00.000Z'),
+    };
+
+    await repository.createTask(task);
+
+    const reloadedRepository = new InMemoryTaskRepository();
+    const tasks = await reloadedRepository.getTasks();
+
+    expect(tasks).toHaveSize(1);
+    expect(tasks[0]).toEqual(task);
+  });
+
+  it('createTask debe persistir en localStorage', async () => {
+    const task: Task = {
+      id: 't1',
+      title: 'Task 1',
+      completed: false,
+      categoryId: 'c1',
+      createdAt: new Date('2026-01-01T00:00:00.000Z'),
+      updatedAt: new Date('2026-01-01T00:00:00.000Z'),
+    };
+
+    await repository.createTask(task);
+
+    const reloadedRepository = new InMemoryTaskRepository();
+    const tasks = await reloadedRepository.getTasks();
+    expect(tasks).toHaveSize(1);
+    expect(tasks[0]?.id).toBe('t1');
+  });
+
+  it('debe volver al seed cuando localStorage contiene datos inválidos', async () => {
+    localStorage.setItem('task-manager.tasks', '{invalid-json');
+
+    const reloadedRepository = new InMemoryTaskRepository();
+    const tasks = await reloadedRepository.getTasks();
+
+    expect(tasks).toEqual([]);
+    expect(localStorage.getItem('task-manager.tasks')).toBe('[]');
   });
 
   it('deleteTask debe eliminar una tarea', async () => {

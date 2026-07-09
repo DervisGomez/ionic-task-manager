@@ -6,6 +6,7 @@ describe('InMemoryCategoryRepository', () => {
   let repository: InMemoryCategoryRepository;
 
   beforeEach(() => {
+    localStorage.clear();
     repository = new InMemoryCategoryRepository();
   });
 
@@ -108,6 +109,60 @@ describe('InMemoryCategoryRepository', () => {
 
     const found = await repository.getCategoryById('c1');
     expect(found).toEqual(updated);
+  });
+
+  it('debe persistir el seed al inicializar sin datos', () => {
+    const stored = localStorage.getItem('task-manager.categories');
+    expect(stored).not.toBeNull();
+
+    const parsed = JSON.parse(stored as string) as Array<{ id: string }>;
+    expect(parsed.map((category) => category.id)).toEqual(['work', 'personal', 'shopping']);
+  });
+
+  it('debe recuperar categorías persistidas al reinicializar', async () => {
+    const category: Category = {
+      id: 'c1',
+      name: 'Category 1',
+      createdAt: new Date('2026-01-01T00:00:00.000Z'),
+      updatedAt: new Date('2026-01-01T00:00:00.000Z'),
+    };
+
+    await repository.createCategory(category);
+
+    const reloadedRepository = new InMemoryCategoryRepository();
+    const categories = await reloadedRepository.getCategories();
+
+    expect(categories.find((item) => item.id === 'c1')).toEqual(category);
+  });
+
+  it('createCategory debe persistir en localStorage', async () => {
+    const category: Category = {
+      id: 'c1',
+      name: 'Category 1',
+      createdAt: new Date('2026-01-01T00:00:00.000Z'),
+      updatedAt: new Date('2026-01-01T00:00:00.000Z'),
+    };
+
+    await repository.createCategory(category);
+
+    const reloadedRepository = new InMemoryCategoryRepository();
+    const categories = await reloadedRepository.getCategories();
+    expect(categories.find((item) => item.id === 'c1')).toEqual(category);
+  });
+
+  it('debe volver al seed cuando localStorage contiene datos inválidos', async () => {
+    localStorage.setItem('task-manager.categories', '{invalid-json');
+
+    const reloadedRepository = new InMemoryCategoryRepository();
+    const categories = await reloadedRepository.getCategories();
+
+    expect(categories).toHaveSize(3);
+    expect(categories.map((item) => item.id)).toEqual(['work', 'personal', 'shopping']);
+
+    const stored = localStorage.getItem('task-manager.categories');
+    expect(stored).not.toBeNull();
+    const parsed = JSON.parse(stored as string) as Array<{ id: string }>;
+    expect(parsed.map((item) => item.id)).toEqual(['work', 'personal', 'shopping']);
   });
 
   it('deleteCategory debe eliminar una categoría', async () => {

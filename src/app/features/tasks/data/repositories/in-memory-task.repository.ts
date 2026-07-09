@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 
+import { LocalStorageTaskDataSource } from '@features/tasks/data/datasources/local-storage-task.datasource';
 import { Task } from '@features/tasks/domain/entities/task.model';
 import { TaskRepository } from '@features/tasks/domain/repositories/task.repository';
 
@@ -11,7 +12,13 @@ import { TaskRepository } from '@features/tasks/domain/repositories/task.reposit
  */
 @Injectable()
 export class InMemoryTaskRepository extends TaskRepository {
-  private tasks: Task[] = [];
+  private readonly dataSource = new LocalStorageTaskDataSource();
+  private tasks: Task[];
+
+  constructor() {
+    super();
+    this.tasks = this.initializeFromStorage();
+  }
 
   /**
    * Obtiene todas las tareas almacenadas en memoria.
@@ -38,6 +45,7 @@ export class InMemoryTaskRepository extends TaskRepository {
    */
   override async createTask(task: Task): Promise<void> {
     this.tasks.push({ ...task });
+    this.persist();
   }
 
   /**
@@ -50,6 +58,7 @@ export class InMemoryTaskRepository extends TaskRepository {
     if (index === -1) return;
 
     this.tasks[index] = { ...task };
+    this.persist();
   }
 
   /**
@@ -58,5 +67,21 @@ export class InMemoryTaskRepository extends TaskRepository {
    */
   override async deleteTask(id: string): Promise<void> {
     this.tasks = this.tasks.filter((t) => t.id !== id);
+    this.persist();
+  }
+
+  private initializeFromStorage(): Task[] {
+    const loaded = this.dataSource.load();
+    if (loaded !== null) {
+      return loaded.map((task) => ({ ...task }));
+    }
+
+    const seed: Task[] = [];
+    this.dataSource.save(seed);
+    return seed;
+  }
+
+  private persist(): void {
+    this.dataSource.save(this.tasks);
   }
 }
