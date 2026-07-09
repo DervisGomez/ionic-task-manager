@@ -21,7 +21,7 @@ Resume el cambio y el motivo.
 
 - [ ] He ejecutado `npm run check` sin errores (formato, lint, typecheck, tests, build)
 - [ ] He añadido o actualizado tests si el cambio lo requiere
-- [ ] He actualizado documentación si aplica (`CHANGELOG.md`, `docs/`, ADR)
+- [ ] He actualizado documentación si aplica (`CHANGELOG.md`, `docs/`)
 
 ## Arquitectura
 
@@ -32,4 +32,4 @@ Resume el cambio y el motivo.
 
 Issues relacionados: #
 
-Guía de contribución: [docs/contributing.md](../docs/contributing.md)
+Documentación: [docs/technical-decisions.md](../docs/technical-decisions.md) · [docs/architecture.md](../docs/architecture.md)

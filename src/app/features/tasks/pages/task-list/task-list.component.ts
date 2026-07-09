@@ -43,6 +43,12 @@ export class TaskListComponent implements ViewWillEnter {
 
   hasTasks = false;
 
+  hasAnyTasks = false;
+
+  showNoTasksEmptyState = false;
+
+  showNoResultsEmptyState = false;
+
   hasMoreVisibleTasks = false;
 
   showInfiniteScroll = false;
@@ -81,6 +87,12 @@ export class TaskListComponent implements ViewWillEnter {
 
   onSearchChanged(value: string): void {
     this.taskFacade.search(value);
+    this.syncViewState();
+  }
+
+  clearFilters(): void {
+    this.taskFacade.search('');
+    this.taskFacade.selectCategory('all');
     this.syncViewState();
   }
 
@@ -189,7 +201,10 @@ export class TaskListComponent implements ViewWillEnter {
       this.categories,
     );
     this.incrementalList.reset(enrichedTasks);
+    this.hasAnyTasks = this.taskFacade.hasAnyTasks;
     this.hasTasks = enrichedTasks.length > 0;
+    this.showNoTasksEmptyState = !this.hasAnyTasks;
+    this.showNoResultsEmptyState = this.hasAnyTasks && !this.hasTasks;
     this.searchTerm = this.taskFacade.searchTerm;
     this.selectedCategory = this.taskFacade.selectedCategory;
     this.refreshVisibleTasks();

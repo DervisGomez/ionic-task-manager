@@ -33,11 +33,14 @@ describe('FloatingActionButtonComponent', () => {
 
   it('should expose accessible label without duplicate hidden labels', () => {
     const accessibleLabel = fixture.nativeElement.querySelector('.visually-hidden') as HTMLElement;
+    const host = fixture.nativeElement as HTMLElement;
 
     expect(component.ariaLabel).toBe('Crear tarea');
     expect(accessibleLabel?.textContent).toBe('Crear tarea');
     expect(fixture.nativeElement.querySelector('span[hidden]')).toBeNull();
     expect(fixture.nativeElement.querySelector('ion-fab-button')).toBeTruthy();
+    expect(host.classList.contains('floating-action-button')).toBeTrue();
+    expect(getComputedStyle(host).position).toBe('fixed');
   });
 
   it('should reflect disabled state', () => {

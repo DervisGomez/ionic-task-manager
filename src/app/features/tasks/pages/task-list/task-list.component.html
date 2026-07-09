@@ -30,13 +30,23 @@
       [class.task-list__content--empty]="!hasTasks"
       [class.task-list__content--list]="hasTasks"
     >
-      <ng-container *ngIf="!hasTasks">
+      <ng-container *ngIf="showNoTasksEmptyState">
         <app-empty-state
           icon="clipboard-outline"
-          title="Aún no hay tareas"
-          description="Crea tu primera tarea y comienza a organizar tu día."
-          buttonText="Añade tu primera tarea"
+          title="Aún no tienes tareas"
+          description="Crea tu primera tarea para comenzar a organizar tu día."
+          buttonText="Nueva tarea"
           (action)="openCreateModal()"
+        ></app-empty-state>
+      </ng-container>
+
+      <ng-container *ngIf="showNoResultsEmptyState">
+        <app-empty-state
+          icon="search-outline"
+          title="No encontramos tareas"
+          description="No hay tareas que coincidan con los filtros actuales."
+          buttonText="Limpiar filtros"
+          (action)="clearFilters()"
         ></app-empty-state>
       </ng-container>
 
@@ -62,7 +72,7 @@
   </div>
 
   <app-floating-action-button
-    *ngIf="hasTasks"
+    *ngIf="hasAnyTasks"
     icon="add"
     ariaLabel="Crear tarea"
     (action)="openCreateModal()"

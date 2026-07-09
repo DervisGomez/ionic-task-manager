@@ -23,13 +23,13 @@ Otras opciones que hayas evaluado, si aplica.
 - [ ] No afecta la separación de capas (dominio / datos / presentación)
 - [ ] Requiere cambios en dominio o casos de uso
 - [ ] Requiere nueva persistencia o adaptador en `data/`
-- [ ] Requiere ADR en `docs/adr/` (decisión arquitectónica relevante)
+- [ ] Requiere documentar la decisión en [docs/technical-decisions.md](../../docs/technical-decisions.md) o [docs/architecture.md](../../docs/architecture.md)
 
 ## Contexto adicional
 
-Referencias al [ROADMAP.md](../../ROADMAP.md), capturas o ejemplos de uso.
+Referencias a [docs/technical-decisions.md](../../docs/technical-decisions.md#aprendizajes--qué-mejoraría-en-el-futuro), capturas o ejemplos de uso.
 
 ## Checklist
 
-- [ ] He revisado el [ROADMAP.md](../../ROADMAP.md) para ver si la idea ya está planificada
-- [ ] La propuesta respeta las convenciones de [docs/contributing.md](../../docs/contributing.md)
+- [ ] He revisado [docs/technical-decisions.md](../../docs/technical-decisions.md) para evoluciones ya contempladas
+- [ ] La propuesta respeta la arquitectura descrita en [docs/architecture.md](../../docs/architecture.md)

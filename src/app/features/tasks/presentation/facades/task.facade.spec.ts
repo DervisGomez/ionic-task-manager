@@ -130,6 +130,16 @@ describe('TaskFacade', () => {
     facade.search('inexistente');
 
     expect(facade.tasks).toHaveSize(0);
+    expect(facade.hasAnyTasks).toBeTrue();
+  });
+
+  it('hasAnyTasks es false cuando no hay tareas cargadas', async () => {
+    getTasksUseCase.execute.and.resolveTo([]);
+
+    await facade.loadTasks();
+
+    expect(facade.hasAnyTasks).toBeFalse();
+    expect(facade.tasks).toHaveSize(0);
   });
 
   it('categoría "all" devuelve todas las tareas', async () => {

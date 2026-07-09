@@ -58,6 +58,21 @@ describe('TaskListComponent', () => {
       get: () => createTaskViewModels(count),
       configurable: true,
     });
+    Object.defineProperty(taskFacadeSpy, 'hasAnyTasks', {
+      get: () => count > 0,
+      configurable: true,
+    });
+  };
+
+  const setFacadeFilteredEmpty = (): void => {
+    Object.defineProperty(taskFacadeSpy, 'tasks', {
+      get: () => [],
+      configurable: true,
+    });
+    Object.defineProperty(taskFacadeSpy, 'hasAnyTasks', {
+      get: () => true,
+      configurable: true,
+    });
   };
 
   const syncViewState = (): void => {
@@ -79,6 +94,7 @@ describe('TaskListComponent', () => {
       ],
       {
         tasks: [],
+        hasAnyTasks: false,
         searchTerm: '',
         selectedCategory: 'all',
         loading: false,
@@ -221,13 +237,65 @@ describe('TaskListComponent', () => {
     expect(component.isCreateModalOpen).toBeTrue();
   });
 
-  it('debe abrir el modal desde el empty state', () => {
-    const button = fixture.nativeElement.querySelector('app-empty-state ion-button') as HTMLElement;
+  it('debe abrir el modal desde el empty state sin tareas', () => {
+    const emptyState = fixture.nativeElement.querySelector('app-empty-state') as HTMLElement;
+    const button = emptyState.querySelector('ion-button') as HTMLElement;
+
+    expect(emptyState.querySelector('.empty-state__title')?.textContent).toContain(
+      'Aún no tienes tareas',
+    );
+    expect(emptyState.querySelector('.empty-state__description')?.textContent).toContain(
+      'Crea tu primera tarea para comenzar a organizar tu día.',
+    );
+    expect(button.textContent).toContain('Nueva tarea');
 
     button.click();
     fixture.detectChanges();
 
     expect(component.isCreateModalOpen).toBeTrue();
+  });
+
+  it('muestra el empty state sin resultados cuando hay tareas pero el filtro no devuelve coincidencias', () => {
+    setFacadeFilteredEmpty();
+    Object.defineProperty(taskFacadeSpy, 'searchTerm', {
+      get: () => 'inexistente',
+      configurable: true,
+    });
+    syncViewState();
+
+    const emptyStates = fixture.nativeElement.querySelectorAll('app-empty-state');
+    const noResultsEmptyState = emptyStates[0] as HTMLElement;
+
+    expect(emptyStates.length).toBe(1);
+    expect(noResultsEmptyState.querySelector('.empty-state__title')?.textContent).toContain(
+      'No encontramos tareas',
+    );
+    expect(noResultsEmptyState.querySelector('.empty-state__description')?.textContent).toContain(
+      'No hay tareas que coincidan con los filtros actuales.',
+    );
+    expect(noResultsEmptyState.querySelector('ion-button')?.textContent).toContain(
+      'Limpiar filtros',
+    );
+    expect(fixture.nativeElement.querySelector('ul.task-list__list')).toBeNull();
+  });
+
+  it('limpia búsqueda y categoría al pulsar Limpiar filtros', () => {
+    setFacadeFilteredEmpty();
+    Object.defineProperty(taskFacadeSpy, 'searchTerm', {
+      get: () => 'inexistente',
+      configurable: true,
+    });
+    Object.defineProperty(taskFacadeSpy, 'selectedCategory', {
+      get: () => 'work',
+      configurable: true,
+    });
+    syncViewState();
+
+    const button = fixture.nativeElement.querySelector('app-empty-state ion-button') as HTMLElement;
+    button.click();
+
+    expect(taskFacadeSpy.search).toHaveBeenCalledWith('');
+    expect(taskFacadeSpy.selectCategory).toHaveBeenCalledWith('all');
   });
 
   it('no muestra el FAB cuando no hay tareas', () => {
@@ -238,6 +306,27 @@ describe('TaskListComponent', () => {
 
   it('muestra el FAB cuando hay tareas', () => {
     setFacadeTasks(1);
+    syncViewState();
+
+    const fab = fixture.nativeElement.querySelector('app-floating-action-button');
+
+    expect(fab).toBeTruthy();
+  });
+
+  it('renderiza el FAB fijo para permanecer anclado al viewport', () => {
+    setFacadeTasks(1);
+    syncViewState();
+
+    const fab = fixture.nativeElement.querySelector('app-floating-action-button') as HTMLElement;
+
+    expect(fab).toBeTruthy();
+    expect(fab.classList.contains('floating-action-button')).toBeTrue();
+    expect(getComputedStyle(fab).position).toBe('fixed');
+    expect(fab.querySelector('ion-fab')).toBeTruthy();
+  });
+
+  it('muestra el FAB cuando hay tareas aunque el filtro no devuelva resultados', () => {
+    setFacadeFilteredEmpty();
     syncViewState();
 
     const fab = fixture.nativeElement.querySelector('app-floating-action-button');

@@ -37,6 +37,11 @@ export class TaskFacade {
     return this.taskViewModels;
   }
 
+  /** Indica si existen tareas en la aplicación, sin aplicar filtros. */
+  get hasAnyTasks(): boolean {
+    return this.state.tasks.length > 0;
+  }
+
   /** Término de búsqueda activo. */
   get searchTerm(): string {
     return this.state.searchTerm;

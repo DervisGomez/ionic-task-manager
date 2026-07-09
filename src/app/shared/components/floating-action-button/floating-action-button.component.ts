@@ -6,6 +6,9 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from 
   styleUrls: ['./floating-action-button.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: false,
+  host: {
+    class: 'floating-action-button',
+  },
 })
 export class FloatingActionButtonComponent {
   /**

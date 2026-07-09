@@ -1,9 +1,19 @@
+:host {
+  display: block;
+  position: fixed;
+  right: var(--app-spacing-md);
+  bottom: calc(
+    var(--app-spacing-lg) + var(--app-spacing-sm) + var(--app-spacing-xs) +
+      env(safe-area-inset-bottom, 0px)
+  );
+  z-index: 10;
+  pointer-events: none;
+}
+
 ion-fab {
-  margin: 0 var(--app-spacing-md)
-    calc(
-      var(--app-spacing-lg) + var(--app-spacing-sm) + var(--app-spacing-xs) +
-        env(safe-area-inset-bottom, 0px)
-    );
+  position: static;
+  margin: 0;
+  pointer-events: auto;
 
   ion-fab-button {
     --box-shadow: var(--app-shadow-md);
