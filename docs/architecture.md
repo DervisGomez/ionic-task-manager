@@ -132,9 +132,11 @@ Sustituir `localStorage` por Firestore implica cambiar `data/` y el composition 
 
 ---
 
-## Firebase (solo Remote Config)
+## Firebase (Hosting y Remote Config)
 
-`@angular/fire` se importa **únicamente** en `core/firebase/`. Features consumen `RemoteConfigService.getBoolean(RemoteConfigKeys.*)` con fallback en `remote-config.defaults.ts`. Sin Firestore, Auth ni Analytics.
+El proyecto Firebase se utiliza para **Hosting** (demo web pública) y **Remote Config** (feature flags). `@angular/fire` se importa **únicamente** en `core/firebase/`. Features consumen `RemoteConfigService.getBoolean(RemoteConfigKeys.*)` con fallback en `remote-config.defaults.ts`. Sin Firestore, Auth ni Analytics.
+
+**Demo web:** [https://ionic-task-manager-9e74b.web.app](https://ionic-task-manager-9e74b.web.app)
 
 ---
 

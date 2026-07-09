@@ -106,7 +106,7 @@ En experiencia de usuario, el **Design System** tokenizado (`src/theme/`) y el *
 
 ## Aprendizajes — ¿Qué mejoraría en el futuro?
 
-La v1.0.0 cumple el objetivo de la prueba: CRUD completo, persistencia local, flags, APK Android, 248 tests y documentación alineada con el código.
+La v1.0.0 cumple el objetivo de la prueba: CRUD completo, persistencia local, flags, demo web en Firebase Hosting, APK Android, 248 tests y documentación alineada con el código.
 
 Extensiones naturales, sin invalidar lo entregado:
 

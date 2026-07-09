@@ -2,16 +2,16 @@
 
 Guía para descargar el APK oficial y compilar nuevas versiones en Android e iOS. Cordova consume el build web en `www/` **sin modificar** el código Angular/Ionic.
 
+> **Alternativa sin compilar:** la [demo web en Firebase Hosting](https://ionic-task-manager-9e74b.web.app) permite validar la aplicación directamente desde el navegador, con la misma versión del código fuente.
+
 ---
 
 ## Descargar el APK oficial
 
-La versión estable **v1.0.0** está publicada en [GitHub Releases](GITHUB_RELEASES_URL).
+La versión estable **v1.0.0** está publicada en [GitHub Releases](https://github.com/DervisGomez/ionic-task-manager/releases/tag/v1.0.0).
 
 - APK generado con Cordova y validado en dispositivo Android físico.
 - Instalable directamente sin compilar el proyecto.
-
-> Sustituir `GITHUB_RELEASES_URL` por la URL de la sección **Releases** del repositorio en GitHub.
 
 Las secciones siguientes documentan el **proceso de compilación** para quienes deseen generar una nueva versión en local.
 
@@ -90,7 +90,7 @@ Cordova ya está en el proyecto. Instalación global opcional: `npm install -g c
 
 ## Android
 
-> El APK oficial de v1.0.0 ya está disponible en [GitHub Releases](GITHUB_RELEASES_URL). Esta sección describe cómo compilar localmente.
+> El APK oficial de v1.0.0 ya está disponible en [GitHub Releases](https://github.com/DervisGomez/ionic-task-manager/releases/tag/v1.0.0). Esta sección describe cómo compilar localmente.
 
 ### Primera vez — añadir plataforma
 

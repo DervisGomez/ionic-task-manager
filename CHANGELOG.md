@@ -6,7 +6,7 @@ El formato está basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1
 
 ## [1.0.0] — 2026-07-09
 
-Versión final de entrega de la prueba técnica Senior. Sprints 1–8 consolidados.
+Versión final de entrega de la prueba técnica. Sprints 1–8 consolidados.
 
 ### Added
 
@@ -26,7 +26,9 @@ Versión final de entrega de la prueba técnica Senior. Sprints 1–8 consolidad
 - Design System modular en `src/theme/` y Motion System con `prefers-reduced-motion`.
 - Pipeline `npm run check` (formato, lint, typecheck, tests, build).
 - Capturas de pantalla en `docs/screenshots/`.
-- Publicación del **APK Android** mediante GitHub Releases (v1.0.0).
+- Publicación de la aplicación en **Firebase Hosting**.
+- Disponibilidad de una **demo web pública** ([ionic-task-manager-9e74b.web.app](https://ionic-task-manager-9e74b.web.app)).
+- Publicación del **APK Android** mediante GitHub Releases.
 
 ### Changed
 

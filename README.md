@@ -1,22 +1,24 @@
 # Ionic Task Manager
 
-**v1.0.0** · Prueba técnica Senior · Angular 20 · Ionic 8 · **248 tests**
+**v1.0.0** · Prueba técnica · Angular 20 · Ionic 8 · **248 tests**
 
-Aplicación híbrida de gestión de **tareas** y **categorías** con Clean Architecture, persistencia local, feature flags (Firebase Remote Config) y empaquetado Android con Cordova.
+# 🚀 Demo
+
+| Acceso               | Enlace                                                                                   |
+| -------------------- | ---------------------------------------------------------------------------------------- |
+| 🌐 **Demo Web**      | [https://ionic-task-manager-9e74b.web.app](https://ionic-task-manager-9e74b.web.app)     |
+| 📱 **Android APK**   | [GitHub Releases](https://github.com/DervisGomez/ionic-task-manager/releases/tag/v1.0.0) |
+| 💻 **Código Fuente** | [Este repositorio](https://github.com/DervisGomez/ionic-task-manager)                    |
+
+La aplicación puede **probarse directamente desde el navegador**, **instalarse en Android** mediante el APK publicado o **desplegarse en iOS** con Cordova (la generación del IPA requiere **macOS y Xcode**).
 
 ---
 
-## Descargar la aplicación
+## Demo en vivo
 
-El proyecto incluye un **APK listo para instalar** en dispositivos Android.
+La aplicación está publicada en **Firebase Hosting** y utiliza la **misma versión** del código fuente del repositorio. Permite probar todas las funcionalidades principales — CRUD de tareas y categorías, búsqueda, filtros, feature flags y persistencia local — **sin instalar** la aplicación.
 
-[**📱 Android APK (GitHub Releases)**](GITHUB_RELEASES_URL)
-
-- Generado con **Apache Cordova 13** (`cordova-android@15`).
-- Validado en un **dispositivo Android físico**.
-- Corresponde a la versión estable **v1.0.0**.
-
-> Sustituir `GITHUB_RELEASES_URL` por la URL de la sección **Releases** del repositorio en GitHub (release `v1.0.0`).
+**URL:** [https://ionic-task-manager-9e74b.web.app](https://ionic-task-manager-9e74b.web.app)
 
 ---
 
@@ -25,7 +27,7 @@ El proyecto incluye un **APK listo para instalar** en dispositivos Android.
 **Requisitos:** Node.js ≥ 20.17 · npm ≥ 10
 
 ```bash
-git clone <url-del-repositorio>
+git clone https://github.com/DervisGomez/ionic-task-manager.git
 cd ionic-task-manager
 npm install
 npm start          # http://localhost:4200
@@ -48,21 +50,21 @@ npm run check      # formato · lint · tipos · tests · build
 - Persistencia en `localStorage` sin backend propio.
 - Feature flag `enable_categories` para mostrar u ocultar administración de categorías.
 - Infinite scroll y renderizado incremental para listas grandes.
-- **APK Android v1.0.0** publicado en GitHub Releases; preparación iOS documentada (solo macOS).
+- **Demo web** en Firebase Hosting y **APK Android v1.0.0** en GitHub Releases.
 
 ---
 
 ## Tecnologías
 
-| Stack           | Uso                                             |
-| --------------- | ----------------------------------------------- |
-| Angular 20      | Framework, routing lazy, Reactive Forms, OnPush |
-| Ionic 8         | UI móvil, modales, toasts, infinite scroll      |
-| TypeScript 5.9  | Tipado estricto                                 |
-| Firebase        | Solo Remote Config (AngularFire 20)             |
-| Cordova 13      | Android (`cordova-android@15`)                  |
-| Jasmine + Karma | 248 tests unitarios en CI                       |
-| SCSS + tokens   | Design System en `src/theme/`                   |
+| Stack           | Uso                                                 |
+| --------------- | --------------------------------------------------- |
+| Angular 20      | Framework, routing lazy, Reactive Forms, OnPush     |
+| Ionic 8         | UI móvil, modales, toasts, infinite scroll          |
+| TypeScript 5.9  | Tipado estricto                                     |
+| Firebase        | Hosting (demo web) y Remote Config (AngularFire 20) |
+| Cordova 13      | Android (`cordova-android@15`)                      |
+| Jasmine + Karma | 248 tests unitarios en CI                           |
+| SCSS + tokens   | Design System en `src/theme/`                       |
 
 ---
 
@@ -118,9 +120,16 @@ Detalle: [docs/performance-benchmark.md](docs/performance-benchmark.md)
 
 ---
 
-## Firebase / Remote Config
+## Firebase
 
-Solo Remote Config. Configurar `firebase` en `src/environments/environment*.ts` (no subir credenciales reales).
+El mismo proyecto Firebase se utiliza para:
+
+| Servicio          | Uso en el proyecto                                                                               |
+| ----------------- | ------------------------------------------------------------------------------------------------ |
+| **Hosting**       | Demo web pública en [ionic-task-manager-9e74b.web.app](https://ionic-task-manager-9e74b.web.app) |
+| **Remote Config** | Feature flag `enable_categories` sin redeploy de la aplicación                                   |
+
+Configurar `firebase` en `src/environments/environment*.ts` (no subir credenciales reales). El despliegue de Hosting sirve el build en `www/` (SPA con rewrites a `index.html`).
 
 | Flag                   | Clave               | Default app |
 | ---------------------- | ------------------- | ----------- |
@@ -132,14 +141,22 @@ Solo Remote Config. Configurar `firebase` en `src/environments/environment*.ts` 
 
 ## Cordova
 
-El proyecto ya cuenta con un **APK publicado** en [GitHub Releases](GITHUB_RELEASES_URL) (v1.0.0). Los pasos siguientes sirven para compilar nuevas versiones en local.
+### Android
+
+El **APK oficial v1.0.0** se descarga desde [GitHub Releases](https://github.com/DervisGomez/ionic-task-manager/releases/tag/v1.0.0). Fue generado con Cordova y **validado en un dispositivo Android físico**.
+
+Para compilar una nueva versión en local:
 
 ```bash
 npx cordova platform add android@15.0.0   # primera vez
 npm run android                           # APK debug local
 ```
 
-**iOS:** la preparación sigue documentada en [docs/cordova-environment.md](docs/cordova-environment.md). La generación del IPA requiere **macOS y Xcode**; no es posible desde Linux.
+### iOS
+
+El proyecto está **preparado para Cordova iOS** (`cordova-ios@8`). La generación del **IPA** requiere **macOS + Xcode**; no es posible desde Linux.
+
+Guía completa: [docs/cordova-environment.md](docs/cordova-environment.md)
 
 ---
 
